@@ -1,8 +1,8 @@
 # Asset Comparison Analysis — BTC / ETH / Gold / World ETF / EM / Bonds (2017–2026)
 
-Empirical comparison of six assets across correlation, real returns, and the "Digital Gold" hypothesis. All prices in USD. Analysis period: November 2017 – April 2026, constrained by ETH data availability.
+Empirical comparison of six assets across correlation, real returns, volatility, drawdown, Sharpe ratio, seasonality, and the "Digital Gold" hypothesis. All prices in USD. Analysis period: November 2017 – April 2026, constrained by ETH data availability.
 
-**Status: Work in progress.** Q1–Q3 complete. Q4 (Volatility), Q5 (Drawdown), Q6 (Sharpe Ratio), Q7 (Seasonality), and Power BI dashboard coming next.
+**Status: Work in progress.** SQL analysis complete. Power BI dashboard coming next.
 
 ---
 
@@ -15,20 +15,37 @@ Empirical comparison of six assets across correlation, real returns, and the "Di
 | GOLD | GLD | SPDR Gold Shares ETF |
 | ETF | ACWI | iShares MSCI All Country World ETF |
 | EM | EEM | iShares MSCI Emerging Markets ETF |
-| BOND | TLT | iShares 20+ Year Treasury Bond ETF |
+| BOND | TLT | iShares 20+ Year Treasury Bond ETF (US Treasuries) |
+
+**Note on BOND:** TLT reflects mark-to-market prices of long-duration US Treasuries. An investor who buys an actual government bond and holds it to maturity receives 100% of face value back plus coupon payments — no nominal loss. The negative returns shown here reflect what a TLT ETF holder would have experienced if selling during the 2022 rate hike cycle. German investors typically prefer Bunds (EU government bonds); the EZB raised rates more slowly than the Fed, so a Bund-based equivalent would show a smaller 2022 drawdown — but the same directional relationship between rates and bond prices applies.
 
 ---
 
 ## Research Questions
 
 **Q1 — Correlation & Crisis Behavior**
-How correlated are the assets across different market regimes? Does BTC move with Gold or with equities?
+How correlated are the assets across different market regimes?
 
 **Q2 — Real Returns**
-Who actually grew purchasing power since 2017, after adjusting for US CPI inflation? Nominal vs. real CAGR, and what $1,000 invested at the start is worth today.
+Who actually grew purchasing power since 2017, after adjusting for US CPI inflation?
 
 **Q3 — Is Bitcoin "Digital Gold"?**
-Gold has two well-established properties: inflation hedge and safe haven. Does BTC share these empirically? Three sub-tests: inflation correlation, safe haven behavior during equity crashes, and rate sensitivity.
+Three sub-tests: inflation hedge, safe haven behavior, rate sensitivity.
+
+**Q4 — Volatility**
+Which asset is most volatile, and is BTC becoming calmer over time?
+
+**Q5 — Maximum Drawdown**
+Worst peak-to-trough loss and recovery time for each asset.
+
+**Q6 — Sharpe Ratio**
+Best return per unit of risk — who was most efficient?
+
+**Q7 — Seasonality**
+Are there systematic monthly patterns? Does "Sell in May" hold?
+
+**SQL — Cross-table queries**
+Ad-hoc analysis using SQLite: yearly winners, simultaneous crashes, safe haven scorecard.
 
 ---
 
@@ -46,7 +63,7 @@ Gold has two well-established properties: inflation hedge and safe haven. Does B
 
 ✓ = statistically significant (p < 0.05), ✗ = not significant
 
-BTC has virtually no correlation with Gold over the full period (r=0.09, not significant). It correlates significantly with equities (r=0.38) and very strongly with ETH (r=0.78). During the 2022 rate hike cycle, BTC and ETH moved almost in lockstep (r=0.91). Gold and Bonds show moderate positive correlation (r=0.36) — both behaving as defensive assets. BTC behaves as a risk-on asset, not a defensive one.
+BTC has virtually no correlation with Gold (r=0.09, not significant) and correlates significantly more with equities (r=0.38). BTC and ETH move almost in lockstep (r=0.78, rising to r=0.91 during 2022 rate hikes) — crypto diversification between BTC and ETH is largely an illusion.
 
 ### Q2 — Real Returns (inflation-adjusted, base $1,000 invested Nov 2017)
 
@@ -60,41 +77,105 @@ BTC has virtually no correlation with Gold over the full period (r=0.09, not sig
 | BOND | -1.68% | -5.01% | $867 | $649 |
 | Cash | 0% | — | $1,000 | $720 |
 
-Inflation eroded ~28% of purchasing power over the period. All assets except Bonds outpaced inflation. Gold outperformed the World ETF — notable given its lower correlation with equities. Bonds were the worst performer: the 2022 rate hike cycle crushed long-duration treasury prices. BTC and ETH lead by a wide margin but with extreme volatility and timing dependency — the CAGR assumes holding through -80% drawdowns.
+Inflation eroded ~28% of purchasing power over the period. Gold outperformed the World ETF — notable given its lower equity correlation. The universal takeaway: invest in something.
 
 ### Q3 — Digital Gold Test
 
-**a) Inflation Hedge**
+**a) Inflation hedge:** No asset shows reliable positive correlation with monthly CPI. None qualifies as an inflation hedge on a month-to-month basis — including Gold. This does not contradict Q2: all assets beat inflation long-term, but none reliably rises *when* inflation spikes.
 
-No asset shows a reliable positive correlation with monthly CPI inflation. All results are inconclusive or mildly negative. EM is the only statistically significant result — and it's negative (r=-0.28, p=0.004), meaning EM tends to fall when inflation rises. The popular narrative that Gold or BTC protect against inflation is not supported empirically in this dataset. Note: this tests month-to-month co-movement with inflation, not long-term purchasing power preservation (see Q2 for that).
-
-**b) Safe Haven — behavior during worst 20% of equity months (ETF ≤ -2.91%)**
+**b) Safe haven — worst 20% of equity months (ETF ≤ -2.91%):**
 
 | Asset | Avg return in bad equity months | Verdict |
 |-------|--------------------------------|---------|
 | BTC | -4.65% | not a safe haven |
 | ETH | -6.67% | not a safe haven |
 | GOLD | -0.65% | partial safe haven |
-| BOND | -2.00% | partial safe haven |
+| BOND | -2.00% | partial — inconsistent |
 | EM | -5.08% | not a safe haven |
 
-Gold is the only asset that holds near-flat when equities crash. Bonds underperformed their theoretical safe-haven role — hurt by the 2022 environment where rates rose and equities fell simultaneously. BTC and ETH fall harder than equities in bad months, confirming risk-on behavior.
+**c) Rate sensitivity:** Gold is the most rate-sensitive asset (r=-0.224, significant) — it competes with yield-bearing alternatives. BTC shows rate sensitivity only during the active 2022 hike cycle (r=-0.389), not as a structural property.
 
-**c) Rate Sensitivity**
+**Overall verdict: BTC is not Digital Gold.** It fails all three tests. BTC is a high-volatility risk-on asset that moves with equities, sells off in crashes, and shows no inflation hedge properties. Gold remains the only asset with consistent (if imperfect) safe haven behavior. Bitcoin's hard supply cap of 21 million coins — the theoretical foundation of the "Digital Gold" argument — does not yet translate into the same behavioral properties. BTC's declining volatility (see Q4) suggests this may change as the asset matures.
 
-| Asset | r (full period) | r (2022 hike cycle) | Verdict |
-|-------|----------------|---------------------|---------|
-| BTC | -0.151 | -0.389 | inconclusive |
-| ETH | -0.038 | -0.229 | rate-insensitive |
-| GOLD | -0.224 | -0.253 | rate-sensitive ✓ |
-| ETF | -0.077 | +0.013 | rate-insensitive |
-| EM | -0.128 | -0.034 | inconclusive |
-| BOND | -0.106 | -0.021 | inconclusive |
+### Q4 — Volatility (annualized)
 
-Counterintuitively, Gold is the most rate-sensitive asset (r=-0.224, significant). Gold pays no yield, so rising rates make it relatively less attractive vs. interest-bearing alternatives. BTC shows rate sensitivity only during the active 2022 hike cycle — not as a structural property.
+| Asset | Ann. Volatility |
+|-------|----------------|
+| ETH | 86.3% |
+| BTC | 66.1% |
+| EM | 21.1% |
+| ETF | 18.1% |
+| GOLD | 16.5% |
+| BOND | 15.5% |
 
-**Overall verdict: BTC is not Digital Gold.**
-It fails all three tests. BTC is empirically a high-volatility risk-on asset that moves with equities and ETH, sells off in crashes, and shows no reliable inflation hedge properties. Gold remains the only asset with genuine (if imperfect) safe haven characteristics. The theoretical argument for BTC — a hard supply cap of 21 million coins, analogous to gold's physical scarcity — does not yet translate into the same behavioral properties. This may change as the asset matures.
+BTC's volatility has declined significantly over time: 135% in 2017 → 40% in 2025. Gold has remained stable at ~13-20%. The gap is closing — but BTC remains 3-4x more volatile than Gold.
+
+### Q5 — Maximum Drawdown
+
+| Asset | Max Drawdown | Peak | Trough | Recovery | Days down | Days up |
+|-------|-------------|------|--------|----------|-----------|---------|
+| ETH | -93.5% | Jan 2018 | Dec 2018 | Jan 2021 | 339 | 767 |
+| BTC | -83.0% | Dec 2017 | Dec 2018 | Nov 2020 | 361 | 717 |
+| BOND | -48.4% | Aug 2020 | Oct 2023 | not recovered | 1171 | — |
+| EM | -39.8% | Feb 2021 | Oct 2022 | Sep 2025 | 614 | 1057 |
+| ETF | -33.5% | Feb 2020 | Mar 2020 | Aug 2020 | 40 | 154 |
+| GOLD | -22.0% | Aug 2020 | Sep 2022 | Mar 2024 | 781 | 525 |
+
+ETF had the fastest recovery by far (154 days). BTC and ETH had the deepest drawdowns but eventually recovered. BOND has not recovered — its 2020 peak remains out of reach. Note: BOND's drawdown reflects TLT ETF mark-to-market pricing; a buy-and-hold investor in actual Treasury bonds would face no nominal loss at maturity.
+
+### Q6 — Sharpe Ratio (risk-adjusted return, risk-free rate: 2.58% p.a.)
+
+| Asset | Sharpe | Bull 2021 | Rate hikes 2022 | Post-hikes 2024+ |
+|-------|--------|-----------|-----------------|-----------------|
+| GOLD | 0.90 | 0.03 | 0.28 | 1.96 |
+| BTC | 0.64 | 1.41 | 0.17 | 0.68 |
+| ETH | 0.62 | 1.89 | 0.02 | 0.29 |
+| ETF | 0.60 | 1.49 | -0.05 | 1.49 |
+| EM | 0.29 | 1.16 | -0.37 | 1.38 |
+| BOND | -0.23 | -0.76 | -0.96 | -0.37 |
+
+Gold has the best risk-adjusted return overall (Sharpe 0.90) — not BTC. BTC has higher absolute returns but also much higher volatility. For a risk-aware investor, Gold is the more efficient asset. BOND is the only asset with a negative Sharpe — holding cash would have been superior.
+
+### Q7 — Seasonality (notable patterns, n≈8 per month)
+
+**BTC:** Best month October (+14.4% avg, 75% hit rate — "Uptober" confirmed). Worst month August (-5.2%, only 25% hit rate). July also strong (+10.3%, 75%).
+
+**Gold:** December strongest (88.9% hit rate — positive in almost every year). September consistently weak (25% hit rate).
+
+**ETF:** July was positive in 100% of years in the dataset. November strong (87.5% hit rate, +4.3% avg).
+
+**"Sell in May":** Not supported. May was positive for all assets, ETF at 75% hit rate.
+
+*Note: with ~8 observations per month, these patterns are indicative rather than statistically robust.*
+
+### SQL — Notable Findings
+
+**Yearly winners (best asset each year):**
+
+| Year | Winner | Est. Annual Return |
+|------|--------|-------------------|
+| 2017 | ETH | +823% |
+| 2018 | BOND | -1.2% (least bad) |
+| 2019 | BTC | +97% |
+| 2020 | ETH | +236% |
+| 2021 | ETH | +217% |
+| 2022 | GOLD | +0.04% (least bad) |
+| 2023 | BTC | +108% |
+| 2024 | BTC | +98% |
+| 2025 | GOLD | +51% |
+| 2026 | EM | +52% (YTD) |
+
+In 2018 and 2022, the "winner" simply lost the least. No asset dominated every year — the strongest argument for diversification in the dataset.
+
+**BTC >10% while Gold negative:** Occurred 15 times. In Risk-On rallies, capital rotates aggressively from Gold into BTC — they compete for the same "alternative asset" allocation. This is the opposite of correlated behavior.
+
+**Simultaneous crash months (BTC, ETH, ETF all < -5%):** Only 3 months in the full period. Gold was near-neutral in all three; BOND was a safe haven only in March 2020 (COVID), but crashed alongside everything else in April 2022 when rates rose.
+
+**Safe haven scorecard (33 months where ETF was negative):**
+- Gold average return: **+0.06%** — holds flat
+- BOND average return: **-1.17%** — loses value
+
+Gold protects. BOND (TLT) does not — at least not in a rate-hike dominated period.
 
 ---
 
@@ -106,7 +187,7 @@ It fails all three tests. BTC is empirically a high-volatility risk-on asset tha
 | [FRED](https://fred.stlouisfed.org) via `fredapi` | US CPI (monthly) | CPIAUCSL |
 | [FRED](https://fred.stlouisfed.org) via `fredapi` | Fed Funds Rate (monthly) | FEDFUNDS |
 
-**Note on methodology:** Only real trading days are used (inner join across all assets). No forward-fill across weekends or holidays — this avoids artificial correlation inflation between assets with different trading schedules (crypto trades 7 days/week, traditional assets 5 days).
+**Methodology note:** Only real trading days are used (inner join across all assets). No forward-fill across weekends — avoids artificial correlation between assets with different trading schedules. FRED API key loaded from `.env`, never hardcoded.
 
 ---
 
@@ -114,23 +195,32 @@ It fails all three tests. BTC is empirically a high-volatility risk-on asset tha
 
 ```
 asset-comparison-analysis/
-├── .env.example           # Copy to .env and add your FRED API key
+├── .env.example               # Copy to .env, add FRED API key
+├── queries.sql                # SQL queries for DB Browser for SQLite
 ├── data/
-│   ├── raw/               # Not tracked by git
-│   └── processed/         # Generated outputs
+│   ├── raw/                   # Not tracked by git
+│   └── processed/
 │       ├── prices_daily.csv
 │       ├── macro_monthly.csv
 │       ├── returns.csv
 │       ├── master.csv
-│       ├── q1_correlation.json
-│       ├── q2_real_returns.json
-│       └── q3_digital_gold.json
+│       ├── rolling_volatility.csv
+│       ├── drawdown_history.csv
+│       ├── rolling_sharpe.csv
+│       ├── seasonality.csv
+│       ├── assets.db          # SQLite database
+│       └── *.json             # Per-question result summaries
 ├── src/
 │   ├── config.py              # Paths, tickers, date range, FRED key via .env
-│   ├── prepare_data.py        # Download + clean all data → processed/
-│   ├── q1_correlation.py      # Correlation across market regimes
-│   ├── q2_real_returns.py     # Nominal vs. real CAGR, $1,000 scenarios
-│   └── q3_digital_gold.py     # Inflation hedge, safe haven, rate sensitivity
+│   ├── prepare_data.py        # Download + clean all data
+│   ├── load_to_sqlite.py      # Load processed CSVs into assets.db
+│   ├── q1_correlation.py
+│   ├── q2_real_returns.py
+│   ├── q3_digital_gold.py
+│   ├── q4_volatility.py
+│   ├── q5_drawdown.py
+│   ├── q6_sharpe.py
+│   └── q7_seasonality.py
 ├── visual/                    # Power BI dashboard (coming)
 └── README.md
 ```
@@ -150,4 +240,11 @@ python src/prepare_data.py
 python src/q1_correlation.py
 python src/q2_real_returns.py
 python src/q3_digital_gold.py
+python src/q4_volatility.py
+python src/q5_drawdown.py
+python src/q6_sharpe.py
+python src/q7_seasonality.py
+python src/load_to_sqlite.py
+# Open data/processed/assets.db in DB Browser for SQLite
+# Run queries from queries.sql
 ```
