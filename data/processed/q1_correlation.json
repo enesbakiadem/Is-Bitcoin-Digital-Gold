@@ -1,0 +1,81 @@
+{
+  "full": {
+    "n_months": 135,
+    "BTC_vs_GOLD": {
+      "spearman_r": 0.0581,
+      "p_value": 0.5036
+    },
+    "BTC_vs_ETF": {
+      "spearman_r": 0.3218,
+      "p_value": 0.0001
+    },
+    "GOLD_vs_ETF": {
+      "spearman_r": 0.2081,
+      "p_value": 0.0155
+    }
+  },
+  "pre_covid": {
+    "n_months": 61,
+    "BTC_vs_GOLD": {
+      "spearman_r": 0.0925,
+      "p_value": 0.4781
+    },
+    "BTC_vs_ETF": {
+      "spearman_r": 0.1387,
+      "p_value": 0.2864
+    },
+    "GOLD_vs_ETF": {
+      "spearman_r": 0.0219,
+      "p_value": 0.867
+    }
+  },
+  "covid_crash": {
+    "note": "insufficient data",
+    "n_months": 5
+  },
+  "bull_2021": {
+    "n_months": 20,
+    "BTC_vs_GOLD": {
+      "spearman_r": -0.0391,
+      "p_value": 0.87
+    },
+    "BTC_vs_ETF": {
+      "spearman_r": 0.5338,
+      "p_value": 0.0153
+    },
+    "GOLD_vs_ETF": {
+      "spearman_r": 0.394,
+      "p_value": 0.0856
+    }
+  },
+  "rate_hikes": {
+    "n_months": 24,
+    "BTC_vs_GOLD": {
+      "spearman_r": 0.3409,
+      "p_value": 0.1031
+    },
+    "BTC_vs_ETF": {
+      "spearman_r": 0.5243,
+      "p_value": 0.0085
+    },
+    "GOLD_vs_ETF": {
+      "spearman_r": 0.3878,
+      "p_value": 0.0611
+    }
+  },
+  "post_hikes": {
+    "n_months": 28,
+    "BTC_vs_GOLD": {
+      "spearman_r": -0.1992,
+      "p_value": 0.3094
+    },
+    "BTC_vs_ETF": {
+      "spearman_r": 0.5036,
+      "p_value": 0.0063
+    },
+    "GOLD_vs_ETF": {
+      "spearman_r": -0.0547,
+      "p_value": 0.7821
+    }
+  }
+}

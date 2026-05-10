@@ -1,0 +1,165 @@
+{
+  "q1_correlation": {
+    "full": {
+      "BTC_vs_GOLD": {
+        "spearman_r": 0.0581,
+        "p_value": 0.5036,
+        "n_months": 135
+      },
+      "BTC_vs_ETF": {
+        "spearman_r": 0.3218,
+        "p_value": 0.0001,
+        "n_months": 135
+      },
+      "GOLD_vs_ETF": {
+        "spearman_r": 0.2081,
+        "p_value": 0.0155,
+        "n_months": 135
+      }
+    },
+    "pre_covid": {
+      "BTC_vs_GOLD": {
+        "spearman_r": 0.0925,
+        "p_value": 0.4781,
+        "n_months": 61
+      },
+      "BTC_vs_ETF": {
+        "spearman_r": 0.1387,
+        "p_value": 0.2864,
+        "n_months": 61
+      },
+      "GOLD_vs_ETF": {
+        "spearman_r": 0.0219,
+        "p_value": 0.867,
+        "n_months": 61
+      }
+    },
+    "covid_crash": {
+      "note": "insufficient data"
+    },
+    "bull_2021": {
+      "BTC_vs_GOLD": {
+        "spearman_r": -0.0391,
+        "p_value": 0.87,
+        "n_months": 20
+      },
+      "BTC_vs_ETF": {
+        "spearman_r": 0.5338,
+        "p_value": 0.0153,
+        "n_months": 20
+      },
+      "GOLD_vs_ETF": {
+        "spearman_r": 0.394,
+        "p_value": 0.0856,
+        "n_months": 20
+      }
+    },
+    "rate_hikes": {
+      "BTC_vs_GOLD": {
+        "spearman_r": 0.3409,
+        "p_value": 0.1031,
+        "n_months": 24
+      },
+      "BTC_vs_ETF": {
+        "spearman_r": 0.5243,
+        "p_value": 0.0085,
+        "n_months": 24
+      },
+      "GOLD_vs_ETF": {
+        "spearman_r": 0.3878,
+        "p_value": 0.0611,
+        "n_months": 24
+      }
+    },
+    "post_hikes": {
+      "BTC_vs_GOLD": {
+        "spearman_r": -0.1992,
+        "p_value": 0.3094,
+        "n_months": 28
+      },
+      "BTC_vs_ETF": {
+        "spearman_r": 0.5036,
+        "p_value": 0.0063,
+        "n_months": 28
+      },
+      "GOLD_vs_ETF": {
+        "spearman_r": -0.0547,
+        "p_value": 0.7821,
+        "n_months": 28
+      }
+    }
+  },
+  "q2_real_returns": {
+    "BTC": {
+      "start_price_usd": 217.46,
+      "end_price_usd": 76304.32,
+      "n_years": 11.2,
+      "nominal_total_pct": 34988.3,
+      "nominal_cagr_pct": 68.38,
+      "real_total_pct": 24838.0,
+      "real_cagr_pct": 63.35
+    },
+    "GOLD": {
+      "start_price_usd": 123.45,
+      "end_price_usd": 423.66,
+      "n_years": 11.2,
+      "nominal_total_pct": 243.2,
+      "nominal_cagr_pct": 11.59,
+      "real_total_pct": 143.9,
+      "real_cagr_pct": 8.25
+    },
+    "ETF": {
+      "start_price_usd": 46.5,
+      "end_price_usd": 151.54,
+      "n_years": 11.2,
+      "nominal_total_pct": 225.9,
+      "nominal_cagr_pct": 11.08,
+      "real_total_pct": 131.6,
+      "real_cagr_pct": 7.75
+    }
+  },
+  "q3_digital_gold": {
+    "a_inflation_hedge": {
+      "BTC": {
+        "spearman_r_vs_inflation": -0.2115,
+        "p_value": 0.0183,
+        "interpretation": "negative = falls with inflation (not a hedge)"
+      },
+      "GOLD": {
+        "spearman_r_vs_inflation": -0.0712,
+        "p_value": 0.4323,
+        "interpretation": "no clear relationship"
+      },
+      "ETF": {
+        "spearman_r_vs_inflation": -0.0996,
+        "p_value": 0.2713,
+        "interpretation": "no clear relationship"
+      }
+    },
+    "b_safe_haven": {
+      "equity_threshold_pct": -2.26,
+      "n_bad_months": 25,
+      "BTC_avg_return_in_bad_months": -3.86,
+      "GOLD_avg_return_in_bad_months": -0.12,
+      "ETF_avg_return_in_bad_months": -5.28,
+      "interpretation": "Mixed \u2014 check individual values"
+    },
+    "c_rate_sensitivity": {
+      "BTC": {
+        "spearman_r_vs_rate_change": -0.0821,
+        "p_value": 0.3647,
+        "interpretation": "no clear rate sensitivity"
+      },
+      "GOLD": {
+        "spearman_r_vs_rate_change": -0.1428,
+        "p_value": 0.1136,
+        "interpretation": "falls when rates rise (rate-sensitive)"
+      },
+      "ETF": {
+        "spearman_r_vs_rate_change": -0.1067,
+        "p_value": 0.2382,
+        "interpretation": "falls when rates rise (rate-sensitive)"
+      }
+    }
+  }
+}

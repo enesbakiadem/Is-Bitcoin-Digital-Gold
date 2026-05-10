@@ -1,0 +1,44 @@
+{
+  "BTC": {
+    "asset": "BTC",
+    "start_date": "2015-01-01",
+    "end_date": "2026-04-01",
+    "n_years": 11.2,
+    "start_price_usd": 217.46,
+    "end_price_usd": 76304.32,
+    "nominal_total_pct": 34988.3,
+    "nominal_cagr_pct": 68.38,
+    "real_total_pct": 24838.0,
+    "real_cagr_pct": 63.35,
+    "usd1000_nominal_endval": 350882.53,
+    "usd1000_real_endval": 249380.46
+  },
+  "GOLD": {
+    "asset": "GOLD",
+    "start_date": "2015-01-01",
+    "end_date": "2026-04-01",
+    "n_years": 11.2,
+    "start_price_usd": 123.45,
+    "end_price_usd": 423.66,
+    "nominal_total_pct": 243.2,
+    "nominal_cagr_pct": 11.59,
+    "real_total_pct": 143.9,
+    "real_cagr_pct": 8.25,
+    "usd1000_nominal_endval": 3431.83,
+    "usd1000_real_endval": 2439.09
+  },
+  "ETF": {
+    "asset": "ETF",
+    "start_date": "2015-01-01",
+    "end_date": "2026-04-01",
+    "n_years": 11.2,
+    "start_price_usd": 46.5,
+    "end_price_usd": 151.54,
+    "nominal_total_pct": 225.9,
+    "nominal_cagr_pct": 11.08,
+    "real_total_pct": 131.6,
+    "real_cagr_pct": 7.75,
+    "usd1000_nominal_endval": 3259.19,
+    "usd1000_real_endval": 2316.39
+  }
+}
