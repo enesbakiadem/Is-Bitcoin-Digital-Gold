@@ -3,26 +3,41 @@ config.py
 ---------
 Central path and project configuration.
 All other scripts import from here — never hardcode paths elsewhere.
+
+FRED API key is loaded from .env file (never hardcoded).
+Create a .env file in the project root with:
+    FRED_API_KEY=your_key_here
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # ── Project root ──────────────────────────────────────────────────────────────
 ROOT      = Path(__file__).resolve().parent.parent
 RAW       = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
+# ── Load .env ─────────────────────────────────────────────────────────────────
+load_dotenv(ROOT / ".env")
+FRED_API_KEY = os.getenv("FRED_API_KEY")
+if not FRED_API_KEY:
+    raise EnvironmentError("FRED_API_KEY not set. Add it to your .env file in the project root.")
+
 # ── Output filenames ──────────────────────────────────────────────────────────
-F_PRICES  = PROCESSED / "prices_daily.csv"    # BTC, Gold, ACWI — daily close USD
+F_PRICES  = PROCESSED / "prices_daily.csv"    # all assets — trading days only, USD
 F_MACRO   = PROCESSED / "macro_monthly.csv"   # CPI, Fed Funds Rate — monthly
-F_RETURNS = PROCESSED / "returns.csv"         # daily/monthly returns, real + nominal
+F_RETURNS = PROCESSED / "returns.csv"         # monthly returns, nominal + real
 F_MASTER  = PROCESSED / "master.csv"          # all merged, analysis-ready
 
 # ── Assets (Yahoo Finance tickers) ───────────────────────────────────────────
 TICKERS = {
     "BTC":  "BTC-USD",   # Bitcoin
-    "GOLD": "GLD",       # SPDR Gold Shares ETF (USD, liquid, long history)
+    "ETH":  "ETH-USD",   # Ethereum
+    "GOLD": "GLD",       # SPDR Gold Shares ETF
     "ETF":  "ACWI",      # iShares MSCI All Country World ETF
+    "EM":   "EEM",       # iShares MSCI Emerging Markets ETF
+    "BOND": "TLT",       # iShares 20+ Year Treasury Bond ETF
 }
 
 # ── FRED series IDs ───────────────────────────────────────────────────────────
@@ -32,13 +47,11 @@ FRED_SERIES = {
 }
 
 # ── Analysis period ───────────────────────────────────────────────────────────
-# BTC reliable daily data starts ~2014-09. Everything aligned to this.
-START_DATE = "2015-01-01"
+# ETH reliable daily data starts ~2016. BTC from ~2014.
+# EEM, TLT, GLD, ACWI all have data well before 2015.
+# Common start: 2016-01-01 to include ETH.
+START_DATE = "2016-01-01"
 END_DATE   = "2026-05-01"
-
-# ── FRED API Key ──────────────────────────────────────────────────────────────
-# Get yours at: https://fred.stlouisfed.org/docs/api/api_key.html
-FRED_API_KEY = "ed0147ac827a51f1a287fc81c10357a7"
 
 # ── Sanity check ─────────────────────────────────────────────────────────────
 if __name__ == "__main__":
@@ -47,5 +60,4 @@ if __name__ == "__main__":
     print(f"PROCESSED : {PROCESSED}")
     print(f"Tickers   : {list(TICKERS.values())}")
     print(f"Period    : {START_DATE} → {END_DATE}")
-    key_status = "OK" if FRED_API_KEY != "YOUR_KEY_HERE" else "NOT SET"
-    print(f"FRED Key  : {key_status}")
+    print(f"FRED Key  : OK")

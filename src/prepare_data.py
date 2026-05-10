@@ -5,15 +5,24 @@ Downloads and cleans all data for the asset comparison analysis.
 
 Sources
 -------
-- Yahoo Finance (via yfinance): BTC-USD, GLD, ACWI — daily close prices
-- FRED API (via fredapi): US CPI, Fed Funds Rate — monthly
+- Yahoo Finance (via yfinance) : BTC, ETH, GLD, ACWI, EEM, TLT — daily close
+- FRED API (via fredapi)       : US CPI, Fed Funds Rate — monthly
 
-Outputs (written to data/processed/)
---------------------------------------
-- prices_daily.csv    : daily closing prices in USD, all three assets
-- macro_monthly.csv   : CPI index + Fed Funds Rate, monthly
-- returns.csv         : monthly returns (nominal + real) for all assets
-- master.csv          : prices + macro merged, analysis-ready
+Key design decisions
+---------------------
+- Trading days only: no forward-fill across weekends/holidays.
+  Forward-filling non-trading days inflates correlation between assets
+  with different trading schedules (e.g. BTC trades 7 days, stocks 5 days).
+  Solution: inner join on dates where ALL assets have real prices.
+- All prices in USD.
+- FRED API key loaded from .env — never hardcoded.
+
+Outputs (data/processed/)
+--------------------------
+- prices_daily.csv   : daily close, trading days only, all assets
+- macro_monthly.csv  : CPI index + Fed Funds Rate, monthly
+- returns.csv        : monthly returns, nominal + real
+- master.csv         : prices + macro merged, analysis-ready
 
 Usage
 ------
@@ -37,9 +46,14 @@ PROCESSED.mkdir(parents=True, exist_ok=True)
 # ─────────────────────────────────────────────────────────────────────────────
 def load_prices() -> pd.DataFrame:
     """
-    Downloads daily adjusted close prices for BTC, GLD, ACWI.
-    All prices in USD. Missing trading days (weekends/holidays) are
-    forward-filled so all three assets share a continuous daily index.
+    Downloads daily adjusted close prices for all tickers.
+
+    Trading days only — no forward-fill.
+    Uses inner join so only dates where ALL assets have a real price are kept.
+    This avoids correlation inflation from interpolated weekend values.
+
+    BTC and ETH trade 7 days/week; traditional assets trade Mon–Fri.
+    After inner join, the effective calendar is Mon–Fri (stock market days).
     """
     frames = {}
     for name, ticker in TICKERS.items():
@@ -52,19 +66,18 @@ def load_prices() -> pd.DataFrame:
             progress=False,
         )
         if df.empty:
-            raise ValueError(f"No data returned for {ticker}. Check ticker or date range.")
+            raise ValueError(f"No data returned for {ticker}. Check ticker or internet connection.")
         frames[name] = df["Close"].squeeze()
 
-    prices = pd.DataFrame(frames)
-    prices.index.name = "date"
+    # Inner join — only real trading days shared by all assets
+    prices = pd.concat(frames, axis=1, join="inner")
     prices.index = pd.to_datetime(prices.index)
-
-    # Forward-fill weekends/holidays so all assets align on same calendar days
-    prices = prices.resample("D").last().ffill()
-    prices = prices.loc[START_DATE:END_DATE]
+    prices.index.name = "date"
+    prices.columns = list(TICKERS.keys())
 
     prices.to_csv(F_PRICES)
     print(f"[OK] {F_PRICES.name}  ({len(prices)} rows, {prices.shape[1]} assets)")
+    print(f"     Date range: {prices.index[0].date()} → {prices.index[-1].date()}")
     return prices
 
 
@@ -76,9 +89,10 @@ def load_macro() -> pd.DataFrame:
     Downloads monthly CPI and Fed Funds Rate from FRED.
 
     CPI (CPIAUCSL): used to compute inflation and deflate nominal returns.
-    Fed Funds Rate (FEDFUNDS): effective overnight rate, proxy for monetary policy.
+    Fed Funds Rate (FEDFUNDS): proxy for monetary policy tightness.
 
-    Both are monthly. Indexed to CPI = 100 at START_DATE for easier interpretation.
+    CPI_indexed: normalized to 100 at START_DATE for readability.
+    inflation_yoy: year-over-year % change in CPI.
     """
     fred = Fred(api_key=FRED_API_KEY)
 
@@ -91,13 +105,10 @@ def load_macro() -> pd.DataFrame:
 
     macro = pd.DataFrame(series)
     macro.index.name = "date"
-    macro = macro.resample("MS").last()  # month-start frequency
+    macro = macro.resample("MS").last()
 
-    # CPI index: normalize to 100 at start date for readability
-    macro["CPI_indexed"] = macro["CPI"] / macro["CPI"].iloc[0] * 100
-
-    # Monthly inflation rate (YoY %)
-    macro["inflation_yoy"] = macro["CPI"].pct_change(12) * 100
+    macro["CPI_indexed"]    = macro["CPI"] / macro["CPI"].iloc[0] * 100
+    macro["inflation_yoy"]  = macro["CPI"].pct_change(12) * 100
 
     macro.to_csv(F_MACRO)
     print(f"[OK] {F_MACRO.name}  ({len(macro)} rows)")
@@ -109,40 +120,33 @@ def load_macro() -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────────────────────
 def build_returns(prices: pd.DataFrame, macro: pd.DataFrame) -> pd.DataFrame:
     """
-    Computes monthly returns for each asset, both nominal and inflation-adjusted.
+    Monthly returns for each asset, nominal and inflation-adjusted.
 
-    Nominal return: simple % change in price month-over-month.
-    Real return: nominal return minus monthly inflation rate.
-        real_r ≈ nominal_r - inflation_monthly
-        (exact: (1 + nominal) / (1 + inflation) - 1)
+    Nominal: simple % change month-over-month.
+    Real: (1 + nominal) / (1 + monthly_inflation) - 1
 
-    Also computes cumulative indexed performance (base = 100 at START_DATE)
-    for charting in Power BI.
+    Cumulative index (base 100 at start) for Power BI performance charts.
     """
-    # Resample daily prices to month-end
     monthly = prices.resample("MS").last()
 
-    # Nominal monthly returns
     returns = monthly.pct_change() * 100
-    returns.columns = [f"{c}_return_pct" for c in returns.columns]
+    returns.columns = [f"{c}_return_pct" for c in monthly.columns]
 
     # Monthly CPI inflation
-    macro_aligned = macro["CPI"].reindex(monthly.index, method="ffill")
-    inflation_monthly = macro_aligned.pct_change() * 100
+    cpi_aligned      = macro["CPI"].reindex(monthly.index, method="ffill")
+    inflation_monthly = cpi_aligned.pct_change() * 100
 
     # Real returns
     for asset in TICKERS.keys():
-        col = f"{asset}_return_pct"
+        nom_col = f"{asset}_return_pct"
         returns[f"{asset}_real_return_pct"] = (
-            ((1 + returns[col] / 100) / (1 + inflation_monthly / 100) - 1) * 100
+            ((1 + returns[nom_col] / 100) / (1 + inflation_monthly / 100) - 1) * 100
         )
 
-    # Cumulative performance index (base 100)
+    # Cumulative performance index
     for asset in TICKERS.keys():
-        col = f"{asset}_return_pct"
-        returns[f"{asset}_cumulative"] = (
-            (1 + returns[col] / 100).cumprod() * 100
-        )
+        nom_col = f"{asset}_return_pct"
+        returns[f"{asset}_cumulative"] = (1 + returns[nom_col] / 100).cumprod() * 100
 
     returns.index.name = "date"
     returns.to_csv(F_RETURNS)
@@ -155,12 +159,11 @@ def build_returns(prices: pd.DataFrame, macro: pd.DataFrame) -> pd.DataFrame:
 # ─────────────────────────────────────────────────────────────────────────────
 def build_master(prices: pd.DataFrame, macro: pd.DataFrame, returns: pd.DataFrame) -> pd.DataFrame:
     """
-    Merges daily prices, monthly macro, and monthly returns into one
-    analysis-ready dataset. Macro and returns are forward-filled to daily
-    frequency so everything shares a common date index.
+    Merges daily prices with monthly macro (forward-filled to daily).
+    Forward-fill is safe here: macro data is legitimately monthly,
+    not a workaround for missing trading days.
     """
-    # Resample macro to daily, forward-fill
-    macro_daily = macro.resample("D").last().ffill()
+    macro_daily   = macro.resample("D").last().ffill()
     returns_daily = returns.resample("D").last().ffill()
 
     master = prices.copy()
@@ -187,6 +190,6 @@ if __name__ == "__main__":
     print("\nBuilding master...")
     master = build_master(prices, macro, returns)
 
-    print("\nPreview — master (last 5 rows):")
-    cols = ["BTC", "GOLD", "ETF", "CPI_indexed", "inflation_yoy", "FED_FUNDS"]
+    print("\nPreview — last 5 rows:")
+    cols = ["BTC", "ETH", "GOLD", "ETF", "EM", "BOND", "inflation_yoy", "FED_FUNDS"]
     print(master.tail(5)[cols].round(2).to_string())
