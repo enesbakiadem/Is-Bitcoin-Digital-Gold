@@ -1,21 +1,31 @@
 """
 q3_digital_gold.py
 ------------------
-Q3 — Is Bitcoin actually "Digital Gold"?
+Q3 — Is Bitcoin "Digital Gold"?
 
 Gold has two well-established properties:
   1. Inflation hedge  — rises as purchasing power falls
   2. Safe haven       — holds value when equity markets crash
 
 This script tests whether BTC shares these properties empirically.
+ETH, EM, and BOND are included as comparison benchmarks.
+
 Three sub-tests:
 
-  a) Inflation hedge: does the asset return correlate with CPI inflation?
-  b) Safe haven: what happens to BTC and Gold when equities have their
-     worst months? A true safe haven should stay flat or rise.
-  c) Rate sensitivity: how do assets respond to Fed rate changes?
-     Rising rates = tighter money = typically bad for growth assets.
-     Gold is theoretically mixed; BTC should behave like a growth asset.
+  a) Inflation hedge
+     Spearman correlation between monthly asset returns and YoY CPI.
+     A true hedge rises when inflation rises.
+
+  b) Safe haven
+     Average returns during the worst 20% of equity months (ETF).
+     A safe haven stays flat or positive when stocks crash.
+     BOND is the classical benchmark here.
+
+  c) Rate sensitivity
+     Spearman correlation between Fed Funds Rate changes and returns.
+     Rising rates = tighter money.
+     Theory: growth assets (BTC, ETH, EM) fall; bonds fall (price/yield
+     inverse); gold is mixed; safe havens hold.
 
 Usage
 ------
@@ -25,27 +35,20 @@ Usage
 import json
 import pandas as pd
 from scipy import stats
-from config import F_MASTER, F_RETURNS, PROCESSED
+from config import F_MASTER, F_RETURNS, PROCESSED, TICKERS
 
 # ── Load data ─────────────────────────────────────────────────────────────────
 master  = pd.read_csv(F_MASTER,  index_col="date", parse_dates=True)
 returns = pd.read_csv(F_RETURNS, index_col="date", parse_dates=True)
 
-# Monthly macro
 macro_m = master[["inflation_yoy", "FED_FUNDS"]].resample("MS").last()
 macro_m["FED_FUNDS_change"] = macro_m["FED_FUNDS"].diff()
 
-# Monthly returns
-ret_m = returns[["BTC_return_pct", "GOLD_return_pct", "ETF_return_pct"]]
+ASSETS      = list(TICKERS.keys())
+RETURN_COLS = {a: f"{a}_return_pct" for a in ASSETS}
 
-# Merge — only rows where all data exists
+ret_m    = returns[[f"{a}_return_pct" for a in ASSETS]]
 combined = ret_m.join(macro_m, how="inner").dropna()
-
-ASSETS = {
-    "BTC":  "BTC_return_pct",
-    "GOLD": "GOLD_return_pct",
-    "ETF":  "ETF_return_pct",
-}
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -53,24 +56,20 @@ ASSETS = {
 # ─────────────────────────────────────────────────────────────────────────────
 def test_inflation_hedge() -> dict:
     """
-    Spearman correlation between monthly asset returns and YoY CPI inflation.
+    Spearman correlation between monthly returns and YoY CPI inflation.
 
-    A true inflation hedge should show positive correlation:
-    when inflation rises, the asset price rises too.
-
-    r > 0.2 and significant → inflation hedge
-    r ~ 0                   → no relationship
-    r < -0.2                → loses value when inflation rises (bad hedge)
+    r > 0.2  and p < 0.05 → inflation hedge
+    r < -0.2 and p < 0.05 → loses value when inflation rises
+    otherwise             → inconclusive
     """
     results = {}
-    for asset, col in ASSETS.items():
-        r, p = stats.spearmanr(combined[col], combined["inflation_yoy"])
+    for asset in ASSETS:
+        r, p = stats.spearmanr(combined[RETURN_COLS[asset]], combined["inflation_yoy"])
         results[asset] = {
             "spearman_r": round(r, 4),
             "p_value":    round(p, 4),
-            "n_months":   len(combined),
             "verdict": (
-                "inflation hedge" if r > 0.2 and p < 0.05
+                "inflation hedge"         if r >  0.2 and p < 0.05
                 else "not an inflation hedge" if r < -0.2 and p < 0.05
                 else "inconclusive"
             ),
@@ -83,51 +82,43 @@ def test_inflation_hedge() -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 def test_safe_haven() -> dict:
     """
-    Splits months into "bad equity months" (worst 20% ETF returns)
-    and "good equity months" (best 20%), then checks average BTC
-    and Gold returns in each bucket.
+    Splits months into worst 20% and best 20% equity months (ETF returns).
+    Checks average return of each asset in both buckets.
 
-    Safe haven logic:
-      - In bad equity months: safe haven should be flat or positive
-      - In good equity months: safe haven typically lags (that's fine)
-
-    Also computes Spearman correlation between ETF returns and BTC/Gold returns
-    to see if BTC falls with equities (= not a safe haven).
+    Safe haven: positive or near-zero in bad equity months.
+    BOND is the classical safe haven benchmark.
+    BTC hypothesis: should be positive if it's "digital gold".
     """
-    # Worst and best 20% equity months
-    low_threshold  = combined["ETF_return_pct"].quantile(0.20)
-    high_threshold = combined["ETF_return_pct"].quantile(0.80)
+    low_thresh  = combined["ETF_return_pct"].quantile(0.20)
+    high_thresh = combined["ETF_return_pct"].quantile(0.80)
 
-    bad_months  = combined[combined["ETF_return_pct"] <= low_threshold]
-    good_months = combined[combined["ETF_return_pct"] >= high_threshold]
+    bad_months  = combined[combined["ETF_return_pct"] <= low_thresh]
+    good_months = combined[combined["ETF_return_pct"] >= high_thresh]
 
     results = {
-        "equity_bad_threshold_pct":  round(low_threshold, 2),
-        "equity_good_threshold_pct": round(high_threshold, 2),
+        "equity_bad_threshold_pct":  round(low_thresh,  2),
+        "equity_good_threshold_pct": round(high_thresh, 2),
         "n_bad_months":              len(bad_months),
         "n_good_months":             len(good_months),
         "assets": {}
     }
 
-    for asset, col in {"BTC": "BTC_return_pct", "GOLD": "GOLD_return_pct"}.items():
+    for asset in ASSETS:
+        col      = RETURN_COLS[asset]
         avg_bad  = bad_months[col].mean()
         avg_good = good_months[col].mean()
-
-        # Correlation with equity returns
-        r, p = stats.spearmanr(combined[col], combined["ETF_return_pct"])
+        r, p     = stats.spearmanr(combined[col], combined["ETF_return_pct"])
 
         results["assets"][asset] = {
-            "avg_return_in_bad_equity_months":  round(avg_bad, 2),
-            "avg_return_in_good_equity_months": round(avg_good, 2),
-            "correlation_with_equity_r":        round(r, 4),
-            "correlation_p_value":              round(p, 4),
+            "avg_return_bad_equity_months":  round(avg_bad,  2),
+            "avg_return_good_equity_months": round(avg_good, 2),
+            "correlation_with_equity_r":     round(r, 4),
             "verdict": (
-                "safe haven" if avg_bad > 0 and r < 0.2
-                else "not a safe haven — falls with equities" if avg_bad < -2 and r > 0.3
+                "safe haven"                        if avg_bad > 0    and r < 0.2
+                else "not a safe haven"             if avg_bad < -2   and r > 0.3
                 else "partial / inconclusive"
             ),
         }
-
     return results
 
 
@@ -136,46 +127,39 @@ def test_safe_haven() -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 def test_rate_sensitivity() -> dict:
     """
-    Spearman correlation between monthly Fed Funds Rate changes
-    and asset returns.
+    Spearman correlation between Fed Funds Rate changes and asset returns.
+    Negative r = falls when rates rise (rate-sensitive).
 
-    Theory:
-      - Rising rates → higher discount rate → growth assets fall (BTC, ETF)
-      - Gold: mixed — sometimes seen as rate-sensitive, sometimes not
-      - A negative r means "falls when rates rise"
-
-    We also split into rate-hike period (2022–2023) vs. overall
-    to see if the relationship was stronger during active tightening.
+    Also computed for the 2022 rate hike cycle specifically,
+    where the Fed raised rates aggressively from ~0% to 5.25%.
     """
     rate_hike = combined.loc["2022-01-01":"2023-12-01"]
 
     results = {}
-    for asset, col in ASSETS.items():
-        # Full period
-        r_full, p_full = stats.spearmanr(combined[col], combined["FED_FUNDS_change"])
+    for asset in ASSETS:
+        col    = RETURN_COLS[asset]
+        r, p   = stats.spearmanr(combined[col], combined["FED_FUNDS_change"])
 
-        # Rate hike period only
         if len(rate_hike) >= 6:
-            r_hike, p_hike = stats.spearmanr(rate_hike[col], rate_hike["FED_FUNDS_change"])
+            r_h, p_h = stats.spearmanr(rate_hike[col], rate_hike["FED_FUNDS_change"])
         else:
-            r_hike, p_hike = None, None
+            r_h, p_h = None, None
 
         results[asset] = {
             "full_period": {
-                "spearman_r": round(r_full, 4),
-                "p_value":    round(p_full, 4),
+                "spearman_r": round(r,   4),
+                "p_value":    round(p,   4),
             },
             "rate_hike_2022_2023": {
-                "spearman_r": round(r_hike, 4) if r_hike else None,
-                "p_value":    round(p_hike, 4) if p_hike else None,
+                "spearman_r": round(r_h, 4) if r_h is not None else None,
+                "p_value":    round(p_h, 4) if p_h is not None else None,
             },
             "verdict": (
-                "rate-sensitive (falls when rates rise)" if r_full < -0.15 and p_full < 0.05
-                else "rate-insensitive" if abs(r_full) < 0.1
+                "rate-sensitive (falls when rates rise)" if r < -0.15 and p < 0.05
+                else "rate-insensitive"                  if abs(r) < 0.1
                 else "inconclusive"
             ),
         }
-
     return results
 
 
@@ -184,25 +168,33 @@ if __name__ == "__main__":
 
     print("\n=== a) Inflation Hedge ===")
     a = test_inflation_hedge()
+    print(f"  {'Asset':<6}  {'r':>8}  {'p':>8}  verdict")
+    print("  " + "-" * 50)
     for asset, res in a.items():
-        print(f"  {asset}: r={res['spearman_r']}  p={res['p_value']}  → {res['verdict']}")
+        print(f"  {asset:<6}  {res['spearman_r']:>8}  {res['p_value']:>8}  {res['verdict']}")
 
     print("\n=== b) Safe Haven ===")
     b = test_safe_haven()
-    print(f"  Bad equity months (ETF ≤ {b['equity_bad_threshold_pct']}%): n={b['n_bad_months']}")
+    print(f"  Bad equity months: ETF ≤ {b['equity_bad_threshold_pct']}%  (n={b['n_bad_months']})")
+    print(f"\n  {'Asset':<6}  {'Bad months':>12}  {'Good months':>12}  {'r vs ETF':>10}  verdict")
+    print("  " + "-" * 70)
     for asset, res in b["assets"].items():
-        print(f"  {asset}:")
-        print(f"    avg return in bad months : {res['avg_return_in_bad_equity_months']}%")
-        print(f"    avg return in good months: {res['avg_return_in_good_equity_months']}%")
-        print(f"    correlation with equity  : r={res['correlation_with_equity_r']}")
-        print(f"    verdict                  : {res['verdict']}")
+        print(
+            f"  {asset:<6}  "
+            f"{res['avg_return_bad_equity_months']:>11.2f}%  "
+            f"{res['avg_return_good_equity_months']:>11.2f}%  "
+            f"{res['correlation_with_equity_r']:>10}  "
+            f"{res['verdict']}"
+        )
 
     print("\n=== c) Rate Sensitivity ===")
     c = test_rate_sensitivity()
+    print(f"  {'Asset':<6}  {'r (full)':>10}  {'r (2022 hikes)':>15}  verdict")
+    print("  " + "-" * 60)
     for asset, res in c.items():
         r_full = res['full_period']['spearman_r']
         r_hike = res['rate_hike_2022_2023']['spearman_r']
-        print(f"  {asset}: r_full={r_full}  r_hike_period={r_hike}  → {res['verdict']}")
+        print(f"  {asset:<6}  {r_full:>10}  {str(r_hike):>15}  {res['verdict']}")
 
     # Save
     out = {"a_inflation_hedge": a, "b_safe_haven": b, "c_rate_sensitivity": c}

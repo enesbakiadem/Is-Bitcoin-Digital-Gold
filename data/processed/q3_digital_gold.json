@@ -1,42 +1,76 @@
 {
   "a_inflation_hedge": {
     "BTC": {
-      "spearman_r": -0.2115,
-      "p_value": 0.0183,
-      "n_months": 124,
-      "verdict": "not an inflation hedge"
+      "spearman_r": -0.1621,
+      "p_value": 0.1054,
+      "verdict": "inconclusive"
+    },
+    "ETH": {
+      "spearman_r": -0.1179,
+      "p_value": 0.2402,
+      "verdict": "inconclusive"
     },
     "GOLD": {
-      "spearman_r": -0.0712,
-      "p_value": 0.4323,
-      "n_months": 124,
+      "spearman_r": -0.1237,
+      "p_value": 0.2179,
       "verdict": "inconclusive"
     },
     "ETF": {
-      "spearman_r": -0.0996,
-      "p_value": 0.2713,
-      "n_months": 124,
+      "spearman_r": -0.1462,
+      "p_value": 0.1446,
+      "verdict": "inconclusive"
+    },
+    "EM": {
+      "spearman_r": -0.2811,
+      "p_value": 0.0044,
+      "verdict": "not an inflation hedge"
+    },
+    "BOND": {
+      "spearman_r": -0.1272,
+      "p_value": 0.2048,
       "verdict": "inconclusive"
     }
   },
   "b_safe_haven": {
-    "equity_bad_threshold_pct": -2.26,
-    "equity_good_threshold_pct": 3.95,
-    "n_bad_months": 25,
-    "n_good_months": 25,
+    "equity_bad_threshold_pct": -2.91,
+    "equity_good_threshold_pct": 4.58,
+    "n_bad_months": 21,
+    "n_good_months": 21,
     "assets": {
       "BTC": {
-        "avg_return_in_bad_equity_months": -3.86,
-        "avg_return_in_good_equity_months": 15.3,
-        "correlation_with_equity_r": 0.3157,
-        "correlation_p_value": 0.0004,
-        "verdict": "not a safe haven \u2014 falls with equities"
+        "avg_return_bad_equity_months": -4.65,
+        "avg_return_good_equity_months": 15.71,
+        "correlation_with_equity_r": 0.3846,
+        "verdict": "not a safe haven"
+      },
+      "ETH": {
+        "avg_return_bad_equity_months": -6.67,
+        "avg_return_good_equity_months": 24.16,
+        "correlation_with_equity_r": 0.4186,
+        "verdict": "not a safe haven"
       },
       "GOLD": {
-        "avg_return_in_bad_equity_months": -0.12,
-        "avg_return_in_good_equity_months": 1.98,
-        "correlation_with_equity_r": 0.2132,
-        "correlation_p_value": 0.0174,
+        "avg_return_bad_equity_months": -0.65,
+        "avg_return_good_equity_months": 2.35,
+        "correlation_with_equity_r": 0.2534,
+        "verdict": "partial / inconclusive"
+      },
+      "ETF": {
+        "avg_return_bad_equity_months": -5.68,
+        "avg_return_good_equity_months": 6.75,
+        "correlation_with_equity_r": 1.0,
+        "verdict": "not a safe haven"
+      },
+      "EM": {
+        "avg_return_bad_equity_months": -5.08,
+        "avg_return_good_equity_months": 6.06,
+        "correlation_with_equity_r": 0.7941,
+        "verdict": "not a safe haven"
+      },
+      "BOND": {
+        "avg_return_bad_equity_months": -2.0,
+        "avg_return_good_equity_months": 1.5,
+        "correlation_with_equity_r": 0.253,
         "verdict": "partial / inconclusive"
       }
     }
@@ -44,34 +78,67 @@
   "c_rate_sensitivity": {
     "BTC": {
       "full_period": {
-        "spearman_r": -0.0821,
-        "p_value": 0.3647
+        "spearman_r": -0.151,
+        "p_value": 0.1318
       },
       "rate_hike_2022_2023": {
-        "spearman_r": -0.3575,
-        "p_value": 0.0863
+        "spearman_r": -0.3886,
+        "p_value": 0.0606
+      },
+      "verdict": "inconclusive"
+    },
+    "ETH": {
+      "full_period": {
+        "spearman_r": -0.0379,
+        "p_value": 0.707
+      },
+      "rate_hike_2022_2023": {
+        "spearman_r": -0.2291,
+        "p_value": 0.2815
       },
       "verdict": "rate-insensitive"
     },
     "GOLD": {
       "full_period": {
-        "spearman_r": -0.1428,
-        "p_value": 0.1136
+        "spearman_r": -0.224,
+        "p_value": 0.0243
       },
       "rate_hike_2022_2023": {
         "spearman_r": -0.2528,
         "p_value": 0.2333
       },
-      "verdict": "inconclusive"
+      "verdict": "rate-sensitive (falls when rates rise)"
     },
     "ETF": {
       "full_period": {
-        "spearman_r": -0.1067,
-        "p_value": 0.2382
+        "spearman_r": -0.0767,
+        "p_value": 0.4457
       },
       "rate_hike_2022_2023": {
         "spearman_r": 0.0131,
         "p_value": 0.9514
+      },
+      "verdict": "rate-insensitive"
+    },
+    "EM": {
+      "full_period": {
+        "spearman_r": -0.1278,
+        "p_value": 0.2027
+      },
+      "rate_hike_2022_2023": {
+        "spearman_r": -0.0342,
+        "p_value": 0.874
+      },
+      "verdict": "inconclusive"
+    },
+    "BOND": {
+      "full_period": {
+        "spearman_r": -0.1059,
+        "p_value": 0.292
+      },
+      "rate_hike_2022_2023": {
+        "spearman_r": -0.0206,
+        "p_value": 0.9239
       },
       "verdict": "inconclusive"
     }
