@@ -1,0 +1,4 @@
+asset;max_drawdown_pct;peak_date;trough_date;recovery_date;days_peak_trough;days_trough_recovery
+BTC;-83,04;2017-12-18;2018-12-14;2020-11-30;361;717
+GOLD;-22,0;2020-08-06;2022-09-26;2024-03-04;781;525
+ETF;-33,53;2020-02-12;2020-03-23;2020-08-24;40;154

@@ -1,0 +1,5 @@
+metric;value;display_value;note;accent_group
+BTC vs Gold correlation;0,0949;r = 0.09;weak relationship;gold
+BTC vs Equity correlation;0,3846;r = 0.38;stronger than gold;equity
+Bitcoin max drawdown;-83,04;−83%;peak-to-trough loss;bitcoin
+Gold max drawdown;-22,0;−22%;far shallower;gold
