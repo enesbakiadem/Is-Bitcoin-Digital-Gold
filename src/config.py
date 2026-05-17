@@ -37,7 +37,6 @@ TICKERS = {
     "GOLD": "GLD",       # SPDR Gold Shares ETF
     "ETF":  "ACWI",      # iShares MSCI All Country World ETF
     "EM":   "EEM",       # iShares MSCI Emerging Markets ETF
-    "BOND": "TLT",       # iShares 20+ Year Treasury Bond ETF
 }
 
 # ── FRED series IDs ───────────────────────────────────────────────────────────
