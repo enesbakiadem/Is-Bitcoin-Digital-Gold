@@ -10,7 +10,7 @@ Standard CSVs: prices_daily, returns, rolling_volatility,
                drawdown_history, rolling_sharpe, seasonality
 Normalized:    normalized_1000  — all assets indexed to 1000 at start
 Summaries:     cagr_summary, drawdown_summary, sharpe_summary,
-               volatility_summary — ready for bar charts in Power BI
+               volatility_summary, volatility_by_year
 
 Usage
 ------
@@ -24,7 +24,7 @@ from config import PROCESSED
 BI = PROCESSED / "bi"
 BI.mkdir(exist_ok=True)
 
-ASSETS = ["BTC", "ETH", "GOLD", "ETF", "EM", "BOND"]
+ASSETS = ["BTC", "ETH", "GOLD", "ETF", "EM"]
 
 
 def export_standard():
@@ -83,12 +83,12 @@ def export_summaries():
     rows = []
     for asset, data in q5.items():
         rows.append({
-            "asset":              asset,
-            "max_drawdown_pct":   data["max_drawdown_pct"],
-            "peak_date":          data["peak_date"],
-            "trough_date":        data["trough_date"],
-            "recovery_date":      data["recovery_date"],
-            "days_peak_trough":   data["days_peak_to_trough"],
+            "asset":                asset,
+            "max_drawdown_pct":     data["max_drawdown_pct"],
+            "peak_date":            data["peak_date"],
+            "trough_date":          data["trough_date"],
+            "recovery_date":        data["recovery_date"],
+            "days_peak_trough":     data["days_peak_to_trough"],
             "days_trough_recovery": data["days_trough_to_recovery"],
         })
     pd.DataFrame(rows).to_csv(BI / "drawdown_summary.csv", index=False, decimal=",", sep=";")
@@ -121,10 +121,41 @@ def export_summaries():
     pd.DataFrame(rows).to_csv(BI / "volatility_summary.csv", index=False, decimal=",", sep=";")
     print(f"[OK] volatility_summary.csv")
 
+    # ── Volatility by Year (Q4) ──────────────────────────────────────────────
+    rows = []
+    for asset, data in q4.items():
+        for year, vol in data["by_year"].items():
+            rows.append({
+                "asset":       asset,
+                "year":        int(year),
+                "ann_vol_pct": vol,
+            })
+    pd.DataFrame(rows).sort_values(["year", "asset"]).to_csv(
+        BI / "volatility_by_year.csv", index=False, decimal=",", sep=";"
+    )
+    print(f"[OK] volatility_by_year.csv")
+
+def export_volatility_monthly():
+    """
+    Monthly average of 30-day rolling volatility.
+    Smoother than daily, less stiff than yearly.
+    Only BTC, ETH, GOLD, ETF for clarity.
+    """
+    df = pd.read_csv(PROCESSED / "rolling_volatility.csv")
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date")
+
+    cols = ["BTC_vol_30d", "GOLD_vol_30d", "ETF_vol_30d"]
+    monthly = df[cols].resample("MS").mean().round(2).reset_index()
+    monthly.columns = ["date", "BTC", "GOLD", "ETF"]
+
+    monthly.to_csv(BI / "volatility_monthly.csv", index=False, decimal=",", sep=";")
+    print(f"[OK] volatility_monthly.csv  ({len(monthly)} rows)")
 
 if __name__ == "__main__":
     export_standard()
     export_normalized()
     export_summaries()
+    export_volatility_monthly()
     print(f"\nDone — load from: data/processed/bi/")
     print("Trennzeichen: Semikolon | Dezimal: Komma")

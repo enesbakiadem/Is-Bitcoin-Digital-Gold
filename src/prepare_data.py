@@ -5,7 +5,7 @@ Downloads and cleans all data for the asset comparison analysis.
 
 Sources
 -------
-- Yahoo Finance (via yfinance) : BTC, ETH, GLD, ACWI, EEM, TLT — daily close
+- Yahoo Finance (via yfinance) : BTC, ETH, GLD, ACWI, EEM — daily close
 - FRED API (via fredapi)       : US CPI, Fed Funds Rate — monthly
 
 Key design decisions
@@ -191,5 +191,5 @@ if __name__ == "__main__":
     master = build_master(prices, macro, returns)
 
     print("\nPreview — last 5 rows:")
-    cols = ["BTC", "ETH", "GOLD", "ETF", "EM", "BOND", "inflation_yoy", "FED_FUNDS"]
+    cols = ["BTC", "ETH", "GOLD", "ETF", "EM", "inflation_yoy", "FED_FUNDS"]
     print(master.tail(5)[cols].round(2).to_string())

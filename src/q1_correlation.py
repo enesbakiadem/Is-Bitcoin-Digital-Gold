@@ -6,10 +6,9 @@ Q1 — How correlated are the assets across different market regimes?
 Core question: does BTC behave like Gold (low equity correlation, safe haven)
 or like a risk-on asset (high equity correlation, sells off in crashes)?
 
-Adding ETH, EM, and BOND gives context:
+Adding ETH and EM gives context:
 - ETH: is BTC unique among crypto or do all cryptos move together?
 - EM: does BTC correlate with emerging markets (both seen as "risk-on")?
-- BOND: classic safe haven benchmark — how does Gold compare to treasuries?
 
 Method: Spearman correlation on monthly returns per market regime.
 Spearman is used over Pearson: BTC/ETH return distributions are
@@ -33,7 +32,7 @@ from config import F_RETURNS, PROCESSED, TICKERS
 # ── Load monthly returns ──────────────────────────────────────────────────────
 returns = pd.read_csv(F_RETURNS, index_col="date", parse_dates=True)
 
-ASSETS = list(TICKERS.keys())  # BTC, ETH, GOLD, ETF, EM, BOND
+ASSETS = list(TICKERS.keys())  # BTC, ETH, GOLD, ETF, EM
 RETURN_COLS = {a: f"{a}_return_pct" for a in ASSETS}
 
 # ── Market regimes ────────────────────────────────────────────────────────────
@@ -52,9 +51,7 @@ PAIRS = [
     ("BTC",  "GOLD"),   # core question
     ("BTC",  "ETF"),    # BTC vs equities
     ("BTC",  "ETH"),    # crypto internal
-    ("BTC",  "BOND"),   # BTC vs safe haven
     ("BTC",  "EM"),     # BTC vs risk-on EM
-    ("GOLD", "BOND"),   # gold vs classic safe haven
     ("GOLD", "ETF"),    # gold vs equities
     ("ETH",  "ETF"),    # ETH vs equities
 ]
@@ -87,7 +84,7 @@ if __name__ == "__main__":
         results[period] = correlate_period(start, end)
 
     # Print — focused view
-    print(f"\n{'Period':<15} {'BTC/GOLD':>10} {'BTC/ETF':>10} {'BTC/ETH':>10} {'BTC/BOND':>10} {'GOLD/BOND':>10}")
+    print(f"\n{'Period':<15} {'BTC/GOLD':>10} {'BTC/ETF':>10} {'BTC/ETH':>10} {'BTC/EM':>10} {'GOLD/ETF':>10}")
     print("-" * 65)
     for period, data in results.items():
         if "note" in data:
@@ -99,8 +96,8 @@ if __name__ == "__main__":
             f"{str(r('BTC_vs_GOLD')):>10}"
             f"{str(r('BTC_vs_ETF')):>10}"
             f"{str(r('BTC_vs_ETH')):>10}"
-            f"{str(r('BTC_vs_BOND')):>10}"
-            f"{str(r('GOLD_vs_BOND')):>10}"
+            f"{str(r('BTC_vs_EM')):>10}"
+            f"{str(r('GOLD_vs_ETF')):>10}"
         )
 
     # Full detail

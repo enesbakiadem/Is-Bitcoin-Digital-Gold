@@ -47,7 +47,7 @@ FRED_SERIES = {
 
 # ── Analysis period ───────────────────────────────────────────────────────────
 # ETH reliable daily data starts ~2016. BTC from ~2014.
-# EEM, TLT, GLD, ACWI all have data well before 2015.
+# EEM, GLD, ACWI all have data well before 2015.
 # Common start: 2016-01-01 to include ETH.
 START_DATE = "2016-01-01"
 END_DATE   = "2026-05-01"

@@ -8,7 +8,7 @@ Gold has two well-established properties:
   2. Safe haven       — holds value when equity markets crash
 
 This script tests whether BTC shares these properties empirically.
-ETH, EM, and BOND are included as comparison benchmarks.
+ETH and EM are included as comparison benchmarks.
 
 Three sub-tests:
 
@@ -19,13 +19,13 @@ Three sub-tests:
   b) Safe haven
      Average returns during the worst 20% of equity months (ETF).
      A safe haven stays flat or positive when stocks crash.
-     BOND is the classical benchmark here.
+     Gold is the classical benchmark here.
 
   c) Rate sensitivity
      Spearman correlation between Fed Funds Rate changes and returns.
      Rising rates = tighter money.
-     Theory: growth assets (BTC, ETH, EM) fall; bonds fall (price/yield
-     inverse); gold is mixed; safe havens hold.
+     Theory: growth assets (BTC, ETH, EM) may fall; gold may hold better
+     if it behaves as a safe haven.
 
 Usage
 ------
@@ -86,7 +86,7 @@ def test_safe_haven() -> dict:
     Checks average return of each asset in both buckets.
 
     Safe haven: positive or near-zero in bad equity months.
-    BOND is the classical safe haven benchmark.
+    Gold is the classical safe haven benchmark.
     BTC hypothesis: should be positive if it's "digital gold".
     """
     low_thresh  = combined["ETF_return_pct"].quantile(0.20)
