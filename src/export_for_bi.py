@@ -433,14 +433,130 @@ def export_executive_kpis() -> None:
     save_bi_csv(df, "executive_kpis.csv")
 
 
+def export_executive_return_risk() -> None:
+    """
+    Export focused return/risk table for the second dashboard page.
+
+    Output:
+        asset | real_cagr | nominal_cagr | ann_vol_pct | max_drawdown_pct
+
+    Used for:
+        - Return vs volatility scatterplot
+        - Real CAGR bar chart
+        - Annualized volatility bar chart
+        - Tooltip context with max drawdown
+    """
+    q2 = read_json("q2_real_returns.json")
+    q4 = read_json("q4_volatility.json")
+    q5 = read_json("q5_drawdown.json")
+
+    rows = []
+
+    for asset in EXECUTIVE_ASSETS:
+        if asset not in q2:
+            raise KeyError(f"q2_real_returns.json is missing asset: {asset}")
+        if asset not in q4:
+            raise KeyError(f"q4_volatility.json is missing asset: {asset}")
+        if asset not in q5:
+            raise KeyError(f"q5_drawdown.json is missing asset: {asset}")
+
+        rows.append({
+            "asset": asset,
+            "real_cagr": q2[asset]["real_cagr_pct"],
+            "nominal_cagr": q2[asset]["nominal_cagr_pct"],
+            "ann_vol_pct": q4[asset]["annualized_vol_pct"],
+            "max_drawdown_pct": q5[asset]["max_drawdown_pct"],
+        })
+
+    df = pd.DataFrame(rows)
+
+    save_bi_csv(df, "executive_return_risk.csv")
+
+
+def export_executive_correlation_regimes() -> None:
+    """
+    Export focused correlation table for the behavior page.
+
+    Output:
+        period | period_label | pair | pair_label | spearman_r | p_value | significant
+
+    Used for:
+        - Correlation by market regime chart
+        - BTC vs Gold compared with BTC vs Equity
+    """
+    q1 = read_json("q1_correlation.json")
+
+    pairs = {
+        "BTC_vs_GOLD": "BTC vs Gold",
+        "BTC_vs_ETF": "BTC vs Equity",
+    }
+
+    period_labels = {
+    "full": "Full period",
+    "bull_2021": "Bull 2021",
+    "rate_hikes": "Rate hikes",
+    "post_hikes": "Post-hikes",
+}
+
+    period_axis_labels = {
+        "full": "\u200BFull period",
+        "bull_2021": "\u200C Bull 2021",
+        "rate_hikes": "\u200D Rate hikes",
+        "post_hikes": "\u2060 Post-hikes",
+}
+
+    rows = []
+
+    for period, data in q1.items():
+        if "note" in data:
+            continue
+
+        for pair_key, pair_label in pairs.items():
+            if pair_key not in data:
+                continue
+
+            r = data[pair_key]["spearman_r"]
+            p = data[pair_key]["p_value"]
+
+            rows.append({
+                "period": period,
+                "period_label": period_labels.get(period, period),
+                "period_axis_label": period_axis_labels.get(period, period_labels.get(period, period)),
+                "pair": pair_key,
+                "pair_label": pair_label,
+                "spearman_r": r,
+                "p_value": p,
+                "significant": p < 0.05,
+            })
+
+    df = pd.DataFrame(rows)
+
+    # Keep a narrative order instead of alphabetical sorting.
+    order = {
+        "Full period": 1,
+        "Crypto bull": 2,
+        "COVID crash": 3,
+        "Bull 2021": 4,
+        "Rate hikes": 5,
+        "Post-hikes": 6,
+    }
+
+    df["period_order"] = df["period_label"].map(order)
+    df = df.sort_values(["period_order", "pair_label"])
+
+    save_bi_csv(df, "executive_correlation_regimes.csv")
+
+
 def export_executive_summary() -> None:
     """
-    Export all focused CSVs needed for the first Power BI page.
+    Export all focused CSVs needed for the executive Power BI pages.
     """
     export_executive_normalized()
     export_executive_drawdown()
     export_executive_safe_haven()
     export_executive_kpis()
+    export_executive_return_risk()
+    export_executive_correlation_regimes()
 
 
 # ─────────────────────────────────────────────────────────────────────────────

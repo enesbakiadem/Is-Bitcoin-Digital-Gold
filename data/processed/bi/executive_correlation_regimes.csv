@@ -1,0 +1,9 @@
+period;period_label;period_axis_label;pair;pair_label;spearman_r;p_value;significant;period_order
+full;Full period;​Full period;BTC_vs_ETF;BTC vs Equity;0,3846;0,0001;True;1
+full;Full period;​Full period;BTC_vs_GOLD;BTC vs Gold;0,0949;0,3454;False;1
+bull_2021;Bull 2021;‌ Bull 2021;BTC_vs_ETF;BTC vs Equity;0,5113;0,0212;True;4
+bull_2021;Bull 2021;‌ Bull 2021;BTC_vs_GOLD;BTC vs Gold;-0,0962;0,6865;False;4
+rate_hikes;Rate hikes;‍ Rate hikes;BTC_vs_ETF;BTC vs Equity;0,4965;0,0136;True;5
+rate_hikes;Rate hikes;‍ Rate hikes;BTC_vs_GOLD;BTC vs Gold;0,3496;0,0941;False;5
+post_hikes;Post-hikes;⁠ Post-hikes;BTC_vs_ETF;BTC vs Equity;0,4866;0,0086;True;6
+post_hikes;Post-hikes;⁠ Post-hikes;BTC_vs_GOLD;BTC vs Gold;-0,1582;0,4214;False;6

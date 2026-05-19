@@ -32,11 +32,9 @@ F_MASTER  = PROCESSED / "master.csv"          # all merged, analysis-ready
 
 # ── Assets (Yahoo Finance tickers) ───────────────────────────────────────────
 TICKERS = {
-    "BTC":  "BTC-USD",   # Bitcoin
-    "ETH":  "ETH-USD",   # Ethereum
-    "GOLD": "GLD",       # SPDR Gold Shares ETF
-    "ETF":  "ACWI",      # iShares MSCI All Country World ETF
-    "EM":   "EEM",       # iShares MSCI Emerging Markets ETF
+    "BTC":  "BTC-USD",
+    "GOLD": "GLD",
+    "ETF":  "ACWI",
 }
 
 # ── FRED series IDs ───────────────────────────────────────────────────────────
