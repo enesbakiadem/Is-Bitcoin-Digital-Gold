@@ -5,7 +5,7 @@ Downloads and cleans all data for the asset comparison analysis.
 
 Sources
 -------
-- Yahoo Finance (via yfinance) : BTC, ETH, GLD, ACWI, EEM — daily close
+- Yahoo Finance (via yfinance) : BTC, GLD, ACWI — daily close
 - FRED API (via fredapi)       : US CPI, Fed Funds Rate — monthly
 
 Key design decisions
@@ -52,7 +52,7 @@ def load_prices() -> pd.DataFrame:
     Uses inner join so only dates where ALL assets have a real price are kept.
     This avoids correlation inflation from interpolated weekend values.
 
-    BTC and ETH trade 7 days/week; traditional assets trade Mon–Fri.
+    BTC trades 7 days/week; traditional assets trade Mon–Fri.
     After inner join, the effective calendar is Mon–Fri (stock market days).
     """
     frames = {}
@@ -191,5 +191,5 @@ if __name__ == "__main__":
     master = build_master(prices, macro, returns)
 
     print("\nPreview — last 5 rows:")
-    cols = ["BTC", "ETH", "GOLD", "ETF", "EM", "inflation_yoy", "FED_FUNDS"]
+    cols = ["BTC", "GOLD", "ETF", "inflation_yoy", "FED_FUNDS"]
     print(master.tail(5)[cols].round(2).to_string())

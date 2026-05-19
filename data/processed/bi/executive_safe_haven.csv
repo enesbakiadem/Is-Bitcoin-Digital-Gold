@@ -1,4 +1,4 @@
 asset;avg_return_bad_equity_months;loss_vs_equity_stress_pct;avg_return_good_equity_months;correlation_with_equity_r;verdict;equity_bad_threshold_pct;equity_good_threshold_pct;n_bad_months;n_good_months
-BTC;-4,65;82,0;15,71;0,3846;not a safe haven;-2,91;4,58;21;21
-GOLD;-0,65;11,4;2,35;0,2534;partial / inconclusive;-2,91;4,58;21;21
-ETF;-5,68;100,0;6,75;1,0;not a safe haven;-2,91;4,58;21;21
+BTC;-3,77;72,8;15,64;0,3414;not a safe haven;-2,33;3,82;28;28
+GOLD;-0,02;0,4;1,76;0,1947;partial / inconclusive;-2,33;3,82;28;28
+ETF;-5,18;100,0;6,39;1,0;not a safe haven;-2,33;3,82;28;28

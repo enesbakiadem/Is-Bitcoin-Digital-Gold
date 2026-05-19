@@ -1,68 +1,35 @@
 {
   "BTC": {
-    "sharpe_ratio": 0.6373,
-    "avg_monthly_return": 3.9737,
-    "monthly_std": 20.4313,
-    "risk_free_rate_ann": 2.5797,
+    "sharpe_ratio": 0.937,
+    "avg_monthly_return": 5.9325,
+    "monthly_std": 21.3184,
+    "risk_free_rate_ann": 1.9958,
     "by_period": {
-      "bull_2021": 1.4104,
-      "rate_hikes": 0.1689,
-      "post_hikes": 0.6792
-    }
-  },
-  "ETH": {
-    "sharpe_ratio": 0.6175,
-    "avg_monthly_return": 5.2462,
-    "monthly_std": 28.2259,
-    "risk_free_rate_ann": 2.5797,
-    "by_period": {
-      "bull_2021": 1.8877,
-      "rate_hikes": 0.015,
-      "post_hikes": 0.287
+      "bull_2021": 1.4176,
+      "rate_hikes": 0.1787,
+      "post_hikes": 0.6905
     }
   },
   "GOLD": {
-    "sharpe_ratio": 0.8983,
-    "avg_monthly_return": 1.3389,
-    "monthly_std": 4.3344,
-    "risk_free_rate_ann": 2.5797,
+    "sharpe_ratio": 0.6841,
+    "avg_monthly_return": 1.0279,
+    "monthly_std": 4.363,
+    "risk_free_rate_ann": 1.9958,
     "by_period": {
-      "bull_2021": 0.034,
-      "rate_hikes": 0.2798,
-      "post_hikes": 1.9566
+      "bull_2021": 0.0696,
+      "rate_hikes": 0.3211,
+      "post_hikes": 1.9908
     }
   },
   "ETF": {
-    "sharpe_ratio": 0.6022,
-    "avg_monthly_return": 1.0043,
-    "monthly_std": 4.5407,
-    "risk_free_rate_ann": 2.5797,
+    "sharpe_ratio": 0.6383,
+    "avg_monthly_return": 0.9312,
+    "monthly_std": 4.151,
+    "risk_free_rate_ann": 1.9958,
     "by_period": {
-      "bull_2021": 1.4949,
-      "rate_hikes": -0.0461,
-      "post_hikes": 1.4883
-    }
-  },
-  "EM": {
-    "sharpe_ratio": 0.2935,
-    "avg_monthly_return": 0.6564,
-    "monthly_std": 5.2105,
-    "risk_free_rate_ann": 2.5797,
-    "by_period": {
-      "bull_2021": 1.1615,
-      "rate_hikes": -0.3723,
-      "post_hikes": 1.3814
-    }
-  },
-  "BOND": {
-    "sharpe_ratio": -0.2313,
-    "avg_monthly_return": -0.0586,
-    "monthly_std": 4.0974,
-    "risk_free_rate_ann": 2.5797,
-    "by_period": {
-      "bull_2021": -0.7622,
-      "rate_hikes": -0.955,
-      "post_hikes": -0.3684
+      "bull_2021": 1.5372,
+      "rate_hikes": -0.0159,
+      "post_hikes": 1.5404
     }
   }
 }

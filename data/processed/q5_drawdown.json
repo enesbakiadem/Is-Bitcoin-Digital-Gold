@@ -7,14 +7,6 @@
     "days_peak_to_trough": 361,
     "days_trough_to_recovery": 717
   },
-  "ETH": {
-    "max_drawdown_pct": -93.51,
-    "peak_date": "2018-01-09",
-    "trough_date": "2018-12-14",
-    "recovery_date": "2021-01-19",
-    "days_peak_to_trough": 339,
-    "days_trough_to_recovery": 767
-  },
   "GOLD": {
     "max_drawdown_pct": -22.0,
     "peak_date": "2020-08-06",
@@ -30,21 +22,5 @@
     "recovery_date": "2020-08-24",
     "days_peak_to_trough": 40,
     "days_trough_to_recovery": 154
-  },
-  "EM": {
-    "max_drawdown_pct": -39.82,
-    "peak_date": "2021-02-17",
-    "trough_date": "2022-10-24",
-    "recovery_date": "2025-09-15",
-    "days_peak_to_trough": 614,
-    "days_trough_to_recovery": 1057
-  },
-  "BOND": {
-    "max_drawdown_pct": -48.35,
-    "peak_date": "2020-08-04",
-    "trough_date": "2023-10-19",
-    "recovery_date": "not yet recovered",
-    "days_peak_to_trough": 1171,
-    "days_trough_to_recovery": "n/a"
   }
 }

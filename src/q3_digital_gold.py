@@ -8,7 +8,6 @@ Gold has two well-established properties:
   2. Safe haven       — holds value when equity markets crash
 
 This script tests whether BTC shares these properties empirically.
-ETH and EM are included as comparison benchmarks.
 
 Three sub-tests:
 
@@ -24,7 +23,7 @@ Three sub-tests:
   c) Rate sensitivity
      Spearman correlation between Fed Funds Rate changes and returns.
      Rising rates = tighter money.
-     Theory: growth assets (BTC, ETH, EM) may fall; gold may hold better
+     Theory: risk assets may fall; Gold may hold better if it behaves as a safe haven.
      if it behaves as a safe haven.
 
 Usage

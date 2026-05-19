@@ -1,7 +1,7 @@
 """
 q1_correlation.py
 -----------------
-Q1 — How correlated are the assets across different market regimes?
+Q1 — Does BTC move like Gold or like equities?
 
 Core question: does BTC behave like Gold (low equity correlation, safe haven)
 or like a risk-on asset (high equity correlation, sells off in crashes)?
@@ -10,9 +10,7 @@ Adding ETH and EM gives context:
 - ETH: is BTC unique among crypto or do all cryptos move together?
 - EM: does BTC correlate with emerging markets (both seen as "risk-on")?
 
-Method: Spearman correlation on monthly returns per market regime.
-Spearman is used over Pearson: BTC/ETH return distributions are
-fat-tailed, violating the normality assumption Pearson requires.
+Method: Spearman correlation on monthly returns.
 
 Interpretation:
   r > 0.6  → strong positive (move together)
@@ -48,12 +46,9 @@ PERIODS = {
 
 # Pairs of interest — focused on the Digital Gold question
 PAIRS = [
-    ("BTC",  "GOLD"),   # core question
-    ("BTC",  "ETF"),    # BTC vs equities
-    ("BTC",  "ETH"),    # crypto internal
-    ("BTC",  "EM"),     # BTC vs risk-on EM
-    ("GOLD", "ETF"),    # gold vs equities
-    ("ETH",  "ETF"),    # ETH vs equities
+    ("BTC",  "GOLD"),
+    ("BTC",  "ETF"),
+    ("GOLD", "ETF"),
 ]
 
 
@@ -84,7 +79,7 @@ if __name__ == "__main__":
         results[period] = correlate_period(start, end)
 
     # Print — focused view
-    print(f"\n{'Period':<15} {'BTC/GOLD':>10} {'BTC/ETF':>10} {'BTC/ETH':>10} {'BTC/EM':>10} {'GOLD/ETF':>10}")
+    print(f"\n{'Period':<15} {'BTC/GOLD':>10} {'BTC/ETF':>10} {'GOLD/ETF':>10}")
     print("-" * 65)
     for period, data in results.items():
         if "note" in data:
@@ -95,8 +90,6 @@ if __name__ == "__main__":
             f"{period:<15}"
             f"{str(r('BTC_vs_GOLD')):>10}"
             f"{str(r('BTC_vs_ETF')):>10}"
-            f"{str(r('BTC_vs_ETH')):>10}"
-            f"{str(r('BTC_vs_EM')):>10}"
             f"{str(r('GOLD_vs_ETF')):>10}"
         )
 

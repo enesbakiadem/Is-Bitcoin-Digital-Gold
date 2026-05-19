@@ -47,7 +47,7 @@ BI.mkdir(exist_ok=True)
 
 
 # Full analysis asset universe after removing bonds.
-ASSETS = ["BTC", "ETH", "GOLD", "ETF", "EM"]
+ASSETS = ["BTC", "GOLD", "ETF"]
 
 # Focused assets for the first Power BI page.
 # BTC = digital gold candidate
