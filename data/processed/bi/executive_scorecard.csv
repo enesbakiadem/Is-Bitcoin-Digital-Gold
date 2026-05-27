@@ -1,0 +1,7 @@
+test;result;verdict;accent_group;sort_order
+Fixed supply narrative;Pass;Bitcoin has a hard supply cap.;pass;1
+Inflation hedge behavior;Inconclusive;No clear monthly inflation hedge behavior.;neutral;2
+Safe haven behavior;Fail;BTC fell in bad equity months while Gold stayed flat.;fail;3
+Gold-like correlation;Fail;BTC-Gold correlation was near zero.;fail;4
+Drawdown profile;Fail;BTC drawdowns were much deeper than Gold.;fail;5
+Return profile;Strong;BTC delivered the highest upside, but with much higher risk.;pass;6

@@ -547,6 +547,106 @@ def export_executive_correlation_regimes() -> None:
     save_bi_csv(df, "executive_correlation_regimes.csv")
 
 
+def export_executive_correlation_full() -> None:
+    """
+    Export focused full-period correlation table for the behavior page.
+
+    Output:
+        pair_label | spearman_r | display_value | note | accent_group | sort_order
+
+    Used for:
+        - Page 3 correlation scale
+        - Showing that BTC is closer to equities than to Gold,
+          but neither relationship is strong.
+    """
+    q1 = read_json("q1_correlation.json")
+    full = q1["full"]
+
+    btc_gold_r = full["BTC_vs_GOLD"]["spearman_r"]
+    btc_gold_p = full["BTC_vs_GOLD"]["p_value"]
+
+    btc_etf_r = full["BTC_vs_ETF"]["spearman_r"]
+    btc_etf_p = full["BTC_vs_ETF"]["p_value"]
+
+    rows = [
+        {
+            "pair_label": "BTC vs Equity",
+            "spearman_r": btc_etf_r,
+            "p_value": btc_etf_p,
+            "display_value": f"r = {btc_etf_r:.2f}",
+            "note": "modest but higher",
+            "accent_group": "equity",
+            "sort_order": 1,
+        },
+        {
+            "pair_label": "BTC vs Gold",
+            "spearman_r": btc_gold_r,
+            "p_value": btc_gold_p,
+            "display_value": f"r = {btc_gold_r:.2f}",
+            "note": "near zero",
+            "accent_group": "gold",
+            "sort_order": 2,
+        },
+    ]
+
+    save_bi_csv(pd.DataFrame(rows), "executive_correlation_full.csv")
+
+
+def export_executive_scorecard() -> None:
+    """
+    Export final Digital Gold scorecard for the closing dashboard page.
+
+    Output:
+        test | result | verdict | accent_group | sort_order
+    """
+    rows = [
+        {
+            "test": "Fixed supply narrative",
+            "result": "Pass",
+            "verdict": "Bitcoin has a hard supply cap.",
+            "accent_group": "pass",
+            "sort_order": 1,
+        },
+        {
+            "test": "Inflation hedge behavior",
+            "result": "Inconclusive",
+            "verdict": "No clear monthly inflation hedge behavior.",
+            "accent_group": "neutral",
+            "sort_order": 2,
+        },
+        {
+            "test": "Safe haven behavior",
+            "result": "Fail",
+            "verdict": "BTC fell in bad equity months while Gold stayed flat.",
+            "accent_group": "fail",
+            "sort_order": 3,
+        },
+        {
+            "test": "Gold-like correlation",
+            "result": "Fail",
+            "verdict": "BTC-Gold correlation was near zero.",
+            "accent_group": "fail",
+            "sort_order": 4,
+        },
+        {
+            "test": "Drawdown profile",
+            "result": "Fail",
+            "verdict": "BTC drawdowns were much deeper than Gold.",
+            "accent_group": "fail",
+            "sort_order": 5,
+        },
+        {
+            "test": "Return profile",
+            "result": "Strong",
+            "verdict": "BTC delivered the highest upside, but with much higher risk.",
+            "accent_group": "pass",
+            "sort_order": 6,
+        },
+    ]
+
+    save_bi_csv(pd.DataFrame(rows), "executive_scorecard.csv")
+
+
 def export_executive_summary() -> None:
     """
     Export all focused CSVs needed for the executive Power BI pages.
@@ -557,6 +657,8 @@ def export_executive_summary() -> None:
     export_executive_kpis()
     export_executive_return_risk()
     export_executive_correlation_regimes()
+    export_executive_correlation_full()
+    export_executive_scorecard()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
