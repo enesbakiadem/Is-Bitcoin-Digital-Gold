@@ -24,16 +24,16 @@ This project tests the Digital Gold claim empirically using BTC, Gold, and globa
 The final Power BI dashboard tells the story across four pages.
 
 ### 1. Verdict
-![Hero page](./visual/1_hero.png)
+![Hero page](./visuals/1_hero.png)
 
 ### 2. Return path
-![Return path](./visual/2_return_path.png)
+![Return path](./visuals/2_return_path.png)
 
 ### 3. Correlation behavior
-![Correlation behavior](./visual/3_correlation_behavior.png)
+![Correlation behavior](./visuals/3_correlation_behavior.png)
 
 ### 4. Final scorecard
-![Scorecard](./visual/4_scorecard.png)
+![Scorecard](./visuals/4_scorecard.png)
 
 The interactive Power BI file is available as:
 
