@@ -1,250 +1,286 @@
-# Asset Comparison Analysis — BTC / ETH / Gold / World ETF / EM / Bonds (2017–2026)
+# Bitcoin Digital Gold Analysis
 
-Empirical comparison of six assets across correlation, real returns, volatility, drawdown, Sharpe ratio, seasonality, and the "Digital Gold" hypothesis. All prices in USD. Analysis period: November 2017 – April 2026, constrained by ETH data availability.
+## Project Snapshot
 
-**Status: Work in progress.** SQL analysis complete. Power BI dashboard coming next.
+- **Type:** end-to-end data analysis project
+- **Tools:** Python, pandas, SciPy, Power BI
+- **Data:** Yahoo Finance, FRED
+- **Assets:** Bitcoin, Gold, Global Equities
+- **Focus:** correlation, safe-haven behavior, real returns, volatility, drawdowns
+- **Output:** reproducible Python pipeline, Power BI dashboard, static dashboard screenshots
 
----
+Is Bitcoin really digital Gold?
 
-## Assets
+> A data analysis project testing whether Bitcoin behaves like Gold in market data, or whether the “digital gold” label is mainly a scarcity narrative.
 
-| Key | Ticker | Description |
-|-----|--------|-------------|
-| BTC | BTC-USD | Bitcoin |
-| ETH | ETH-USD | Ethereum |
-| GOLD | GLD | SPDR Gold Shares ETF |
-| ETF | ACWI | iShares MSCI All Country World ETF |
-| EM | EEM | iShares MSCI Emerging Markets ETF |
-| BOND | TLT | iShares 20+ Year Treasury Bond ETF (US Treasuries) |
+Bitcoin is often described as “digital Gold”.
+The idea sounds intuitive: both are scarce, independent of governments, and viewed by some as alternatives to traditional money.
+But scarcity alone does not guarantee similar behavior.
 
-**Note on BOND:** TLT reflects mark-to-market prices of long-duration US Treasuries. An investor who buys an actual government bond and holds it to maturity receives 100% of face value back plus coupon payments — no nominal loss. The negative returns shown here reflect what a TLT ETF holder would have experienced if selling during the 2022 rate hike cycle. German investors typically prefer Bunds (EU government bonds); the EZB raised rates more slowly than the Fed, so a Bund-based equivalent would show a smaller 2022 drawdown — but the same directional relationship between rates and bond prices applies.
+This project tests the Digital Gold claim empirically using BTC, Gold, and global equities from 2014 to 2026.
 
----
+## 📸 Dashboard Preview
 
-## Research Questions
+The final Power BI dashboard tells the story across four pages.
 
-**Q1 — Correlation & Crisis Behavior**
-How correlated are the assets across different market regimes?
+### 1. Verdict: Bitcoin did not behave like a safe haven
+![Hero page](./visual/1_hero.png)
 
-**Q2 — Real Returns**
-Who actually grew purchasing power since 2017, after adjusting for US CPI inflation?
+### 2. Return path: high return, rougher path
+![Return path](./visual/2_return_path.png)
 
-**Q3 — Is Bitcoin "Digital Gold"?**
-Three sub-tests: inflation hedge, safe haven behavior, rate sensitivity.
+### 3. Correlation behavior: closer to equities, but not strongly tied to either
+![Correlation behavior](./visual/3_correlation_behavior.png)
 
-**Q4 — Volatility**
-Which asset is most volatile, and is BTC becoming calmer over time?
+### 4. Final scorecard
+![Scorecard](./visual/4_scorecard.png)
 
-**Q5 — Maximum Drawdown**
-Worst peak-to-trough loss and recovery time for each asset.
+The interactive Power BI file is available as:
 
-**Q6 — Sharpe Ratio**
-Best return per unit of risk — who was most efficient?
+```text
+btc-digital-gold-dashboard.pbix
+````
 
-**Q7 — Seasonality**
-Are there systematic monthly patterns? Does "Sell in May" hold?
+## 🎯 Research Question
 
-**SQL — Cross-table queries**
-Ad-hoc analysis using SQLite: yearly winners, simultaneous crashes, safe haven scorecard.
+Bitcoin is often called “digital Gold” because of its fixed supply.
 
----
+This project asks:
 
-## Key Findings
+> Does Bitcoin only resemble Gold in its scarcity narrative, or has it also behaved like Gold in market data?
 
-### Q1 — Correlation (Spearman, monthly returns)
+To test this, the analysis compares Bitcoin with:
 
-| Pair | Full period | Bull 2021 | Rate hikes 2022 | Post-hikes 2024+ |
-|------|------------|-----------|-----------------|-----------------|
-| BTC vs. GOLD | 0.09 ✗ | -0.10 | 0.35 | -0.16 |
-| BTC vs. ETF | 0.38 ✓ | 0.51 | 0.50 | 0.49 |
-| BTC vs. ETH | 0.78 ✓ | 0.70 | 0.91 | 0.78 |
-| BTC vs. BOND | 0.05 ✗ | -0.06 | 0.27 | -0.15 |
-| GOLD vs. BOND | 0.36 ✓ | 0.28 | 0.50 | 0.28 |
+| Asset           | Ticker  | Role                             |
+| --------------- | ------- | -------------------------------- |
+| Bitcoin         | BTC-USD | Digital Gold candidate           |
+| Gold            | GLD     | Traditional safe-haven benchmark |
+| Global equities | ACWI    | Risk-asset benchmark             |
 
-✓ = statistically significant (p < 0.05), ✗ = not significant
+## 🧠 Background
 
-BTC has virtually no correlation with Gold (r=0.09, not significant) and correlates significantly more with equities (r=0.38). BTC and ETH move almost in lockstep (r=0.78, rising to r=0.91 during 2022 rate hikes) — crypto diversification between BTC and ETH is largely an illusion.
+Gold has historically been viewed as a store of value and partial safe haven.
+Bitcoin is sometimes described as a digital version of Gold because its supply is algorithmically limited.
 
-### Q2 — Real Returns (inflation-adjusted, base $1,000 invested Nov 2017)
+However, an asset can be scarce without behaving like a safe haven.
 
-| Asset | Nominal CAGR | Real CAGR | $1,000 → nominal | $1,000 → real |
-|-------|-------------|-----------|-----------------|---------------|
-| BTC | 26.97% | 22.68% | $7,456 | $5,582 |
-| ETH | 21.21% | 17.12% | $5,046 | $3,778 |
-| GOLD | 16.05% | 12.13% | $3,498 | $2,619 |
-| ETF | 11.38% | 7.61% | $2,476 | $1,854 |
-| EM | 6.45% | 2.85% | $1,692 | $1,267 |
-| BOND | -1.68% | -5.01% | $867 | $649 |
-| Cash | 0% | — | $1,000 | $720 |
+This project therefore separates the narrative from the observed behavior:
 
-Inflation eroded ~28% of purchasing power over the period. Gold outperformed the World ETF — notable given its lower equity correlation. The universal takeaway: invest in something.
+* Does Bitcoin move like Gold?
+* Does Bitcoin hold up when equities fall?
+* Does Bitcoin hedge inflation?
+* Did Bitcoin deliver higher returns, and at what risk?
+* Has Bitcoin behaved like digital Gold so far?
 
-### Q3 — Digital Gold Test
+## 📊 Data Sources
 
-**a) Inflation hedge:** No asset shows reliable positive correlation with monthly CPI. None qualifies as an inflation hedge on a month-to-month basis — including Gold. This does not contradict Q2: all assets beat inflation long-term, but none reliably rises *when* inflation spikes.
+| Source                       | Data                        | Series / Tickers   |
+| ---------------------------- | --------------------------- | ------------------ |
+| Yahoo Finance via `yfinance` | Daily adjusted close prices | BTC-USD, GLD, ACWI |
+| FRED via `fredapi`           | US CPI inflation            | CPIAUCSL           |
+| FRED via `fredapi`           | Fed Funds Rate              | FEDFUNDS           |
 
-**b) Safe haven — worst 20% of equity months (ETF ≤ -2.91%):**
+## 📆 Analysis Period
 
-| Asset | Avg return in bad equity months | Verdict |
-|-------|--------------------------------|---------|
-| BTC | -4.65% | not a safe haven |
-| ETH | -6.67% | not a safe haven |
-| GOLD | -0.65% | partial safe haven |
-| BOND | -2.00% | partial — inconsistent |
-| EM | -5.08% | not a safe haven |
+The analysis uses the longest common period available for BTC, Gold, and global equities:
 
-**c) Rate sensitivity:** Gold is the most rate-sensitive asset (r=-0.224, significant) — it competes with yield-bearing alternatives. BTC shows rate sensitivity only during the active 2022 hike cycle (r=-0.389), not as a structural property.
-
-**Overall verdict: BTC is not Digital Gold.** It fails all three tests. BTC is a high-volatility risk-on asset that moves with equities, sells off in crashes, and shows no inflation hedge properties. Gold remains the only asset with consistent (if imperfect) safe haven behavior. Bitcoin's hard supply cap of 21 million coins — the theoretical foundation of the "Digital Gold" argument — does not yet translate into the same behavioral properties. BTC's declining volatility (see Q4) suggests this may change as the asset matures.
-
-### Q4 — Volatility (annualized)
-
-| Asset | Ann. Volatility |
-|-------|----------------|
-| ETH | 86.3% |
-| BTC | 66.1% |
-| EM | 21.1% |
-| ETF | 18.1% |
-| GOLD | 16.5% |
-| BOND | 15.5% |
-
-BTC's volatility has declined significantly over time: 135% in 2017 → 40% in 2025. Gold has remained stable at ~13-20%. The gap is closing — but BTC remains 3-4x more volatile than Gold.
-
-### Q5 — Maximum Drawdown
-
-| Asset | Max Drawdown | Peak | Trough | Recovery | Days down | Days up |
-|-------|-------------|------|--------|----------|-----------|---------|
-| ETH | -93.5% | Jan 2018 | Dec 2018 | Jan 2021 | 339 | 767 |
-| BTC | -83.0% | Dec 2017 | Dec 2018 | Nov 2020 | 361 | 717 |
-| BOND | -48.4% | Aug 2020 | Oct 2023 | not recovered | 1171 | — |
-| EM | -39.8% | Feb 2021 | Oct 2022 | Sep 2025 | 614 | 1057 |
-| ETF | -33.5% | Feb 2020 | Mar 2020 | Aug 2020 | 40 | 154 |
-| GOLD | -22.0% | Aug 2020 | Sep 2022 | Mar 2024 | 781 | 525 |
-
-ETF had the fastest recovery by far (154 days). BTC and ETH had the deepest drawdowns but eventually recovered. BOND has not recovered — its 2020 peak remains out of reach. Note: BOND's drawdown reflects TLT ETF mark-to-market pricing; a buy-and-hold investor in actual Treasury bonds would face no nominal loss at maturity.
-
-### Q6 — Sharpe Ratio (risk-adjusted return, risk-free rate: 2.58% p.a.)
-
-| Asset | Sharpe | Bull 2021 | Rate hikes 2022 | Post-hikes 2024+ |
-|-------|--------|-----------|-----------------|-----------------|
-| GOLD | 0.90 | 0.03 | 0.28 | 1.96 |
-| BTC | 0.64 | 1.41 | 0.17 | 0.68 |
-| ETH | 0.62 | 1.89 | 0.02 | 0.29 |
-| ETF | 0.60 | 1.49 | -0.05 | 1.49 |
-| EM | 0.29 | 1.16 | -0.37 | 1.38 |
-| BOND | -0.23 | -0.76 | -0.96 | -0.37 |
-
-Gold has the best risk-adjusted return overall (Sharpe 0.90) — not BTC. BTC has higher absolute returns but also much higher volatility. For a risk-aware investor, Gold is the more efficient asset. BOND is the only asset with a negative Sharpe — holding cash would have been superior.
-
-### Q7 — Seasonality (notable patterns, n≈8 per month)
-
-**BTC:** Best month October (+14.4% avg, 75% hit rate — "Uptober" confirmed). Worst month August (-5.2%, only 25% hit rate). July also strong (+10.3%, 75%).
-
-**Gold:** December strongest (88.9% hit rate — positive in almost every year). September consistently weak (25% hit rate).
-
-**ETF:** July was positive in 100% of years in the dataset. November strong (87.5% hit rate, +4.3% avg).
-
-**"Sell in May":** Not supported. May was positive for all assets, ETF at 75% hit rate.
-
-*Note: with ~8 observations per month, these patterns are indicative rather than statistically robust.*
-
-### SQL — Notable Findings
-
-**Yearly winners (best asset each year):**
-
-| Year | Winner | Est. Annual Return |
-|------|--------|-------------------|
-| 2017 | ETH | +823% |
-| 2018 | BOND | -1.2% (least bad) |
-| 2019 | BTC | +97% |
-| 2020 | ETH | +236% |
-| 2021 | ETH | +217% |
-| 2022 | GOLD | +0.04% (least bad) |
-| 2023 | BTC | +108% |
-| 2024 | BTC | +98% |
-| 2025 | GOLD | +51% |
-| 2026 | EM | +52% (YTD) |
-
-In 2018 and 2022, the "winner" simply lost the least. No asset dominated every year — the strongest argument for diversification in the dataset.
-
-**BTC >10% while Gold negative:** Occurred 15 times. In Risk-On rallies, capital rotates aggressively from Gold into BTC — they compete for the same "alternative asset" allocation. This is the opposite of correlated behavior.
-
-**Simultaneous crash months (BTC, ETH, ETF all < -5%):** Only 3 months in the full period. Gold was near-neutral in all three; BOND was a safe haven only in March 2020 (COVID), but crashed alongside everything else in April 2022 when rates rose.
-
-**Safe haven scorecard (33 months where ETF was negative):**
-- Gold average return: **+0.06%** — holds flat
-- BOND average return: **-1.17%** — loses value
-
-Gold protects. BOND (TLT) does not — at least not in a rate-hike dominated period.
-
----
-
-## Data Sources
-
-| Source | What | Tickers / Series |
-|--------|------|-----------------|
-| [Yahoo Finance](https://finance.yahoo.com) via `yfinance` | Daily adjusted close prices | BTC-USD, ETH-USD, GLD, ACWI, EEM, TLT |
-| [FRED](https://fred.stlouisfed.org) via `fredapi` | US CPI (monthly) | CPIAUCSL |
-| [FRED](https://fred.stlouisfed.org) via `fredapi` | Fed Funds Rate (monthly) | FEDFUNDS |
-
-**Methodology note:** Only real trading days are used (inner join across all assets). No forward-fill across weekends — avoids artificial correlation between assets with different trading schedules. FRED API key loaded from `.env`, never hardcoded.
-
----
-
-## Project Structure
-
-```
-asset-comparison-analysis/
-├── .env.example               # Copy to .env, add FRED API key
-├── queries.sql                # SQL queries for DB Browser for SQLite
-├── data/
-│   ├── raw/                   # Not tracked by git
-│   └── processed/
-│       ├── prices_daily.csv
-│       ├── macro_monthly.csv
-│       ├── returns.csv
-│       ├── master.csv
-│       ├── rolling_volatility.csv
-│       ├── drawdown_history.csv
-│       ├── rolling_sharpe.csv
-│       ├── seasonality.csv
-│       ├── assets.db          # SQLite database
-│       └── *.json             # Per-question result summaries
-├── src/
-│   ├── config.py              # Paths, tickers, date range, FRED key via .env
-│   ├── prepare_data.py        # Download + clean all data
-│   ├── load_to_sqlite.py      # Load processed CSVs into assets.db
-│   ├── q1_correlation.py
-│   ├── q2_real_returns.py
-│   ├── q3_digital_gold.py
-│   ├── q4_volatility.py
-│   ├── q5_drawdown.py
-│   ├── q6_sharpe.py
-│   └── q7_seasonality.py
-├── visual/                    # Power BI dashboard (coming)
-└── README.md
+```text
+2014-09-17 to 2026-04-30
 ```
 
----
+Only days where all three assets have valid prices are used.
+No forward-fill is applied across asset calendars.
 
-## Reproducing the Analysis
+## ⚙️ Methodology
+
+The project uses a reproducible Python pipeline:
+
+1. Download daily prices for BTC, Gold, and global equities
+2. Inner-join assets on common trading days
+3. Calculate monthly returns
+4. Add macro data from FRED
+5. Run Digital Gold tests:
+
+   * Spearman correlation
+   * safe-haven behavior in bad equity months
+   * inflation sensitivity
+   * rate sensitivity
+   * real returns
+   * volatility
+   * maximum drawdown
+6. Export clean CSV files for Power BI
+
+### Why Spearman correlation?
+
+Spearman correlation is used instead of Pearson correlation because Bitcoin returns are highly non-normal and fat-tailed.
+
+Spearman measures whether two assets tend to move in the same rank order, without assuming a linear relationship or normally distributed returns.
+
+### Safe-haven test
+
+Bad equity months are defined as the worst 20% of monthly global equity returns.
+
+The test asks:
+
+> When equities perform poorly, does Bitcoin behave more like Gold or more like a risk asset?
+
+## 📈 Key Results
+
+### 1. Bitcoin did not behave like a safe haven
+
+During the worst 20% of equity months:
+
+| Asset           | Average return |
+| --------------- | -------------: |
+| Gold            |         +0.02% |
+| Bitcoin         |         -3.77% |
+| Global equities |         -5.18% |
+
+Gold stayed essentially flat.
+Bitcoin fell with equities.
+
+This is one of the clearest findings challenging the Digital Gold safe-haven claim.
+
+### 2. BTC-Gold correlation was near zero
+
+Full-period Spearman correlation of monthly returns:
+
+| Pair                    | Spearman r | Interpretation     |
+| ----------------------- | ---------: | ------------------ |
+| BTC vs Gold             |       0.09 | Near zero          |
+| BTC vs Global equities  |       0.38 | Modest, but higher |
+| Gold vs Global equities |       0.25 | Weak/modest        |
+
+Bitcoin was closer to equities than to Gold, but neither relationship was strong.
+
+This matters:
+The result does **not** show that Bitcoin is simply an equity clone.
+It shows that Bitcoin has not moved like Gold.
+
+### 3. Bitcoin delivered extraordinary returns
+
+Real CAGR, inflation-adjusted:
+
+| Asset           | Real CAGR |
+| --------------- | --------: |
+| Bitcoin         |    53.30% |
+| Gold            |     8.62% |
+| Global equities |     7.46% |
+
+Bitcoin dominated total returns.
+
+Gold also performed strongly and quietly outperformed global equities over the period.
+
+### 4. Bitcoin’s path was much rougher
+
+Maximum drawdown:
+
+| Asset           | Max drawdown |
+| --------------- | -----------: |
+| Bitcoin         |      -83.04% |
+| Global equities |      -33.53% |
+| Gold            |      -22.00% |
+
+Bitcoin delivered the highest upside, but its downside risk was not Gold-like.
+
+### 5. Bitcoin remained much more volatile
+
+Annualized volatility:
+
+| Asset           | Annualized volatility |
+| --------------- | --------------------: |
+| Bitcoin         |                66.41% |
+| Global equities |                16.93% |
+| Gold            |                15.94% |
+
+Bitcoin remained roughly four times as volatile as Gold and global equities.
+
+### 6. Inflation hedge behavior was inconclusive
+
+None of the assets showed clear monthly inflation-hedge behavior.
+
+This does not mean the assets failed to beat inflation over the full period.
+It means they did not reliably rise in the same months when inflation was high.
+
+## 🧾 Final Interpretation
+
+Bitcoin shares Gold’s scarcity narrative, but not its observed market behavior.
+
+The strongest case for Bitcoin is:
+
+* fixed supply
+* high long-term return
+* independent monetary narrative
+
+The weaker case is:
+
+* safe-haven behavior
+* Gold-like correlation
+* Gold-like drawdown profile
+
+Final takeaway:
+
+> Scarcity is similar. Behavior, so far, is not.
+
+## ⚠️ Limitations
+
+Bitcoin is a young asset.
+
+This analysis covers most of Bitcoin’s liquid market history, but only a small slice of Gold’s much longer monetary history.
+
+Future behavior may change as Bitcoin matures, adoption broadens, and market structure evolves.
+
+Additional limitations:
+
+* GLD is used as a tradable Gold proxy, not physical Gold
+* ACWI is used as a global equity benchmark
+* Correlation does not imply causation
+* Safe-haven behavior is tested using the worst 20% of equity months, which is an intuitive but not universal stress definition
+* Macro relationships such as inflation sensitivity are descriptive, not causal
+* Static screenshots cannot fully replicate the interactive Power BI dashboard
+
+## 🛠️ Tools
+
+* Python
+* pandas
+* SciPy
+* yfinance
+* fredapi
+* Power BI
+* Git / GitHub
+
+## ⚙️ Reproducing the Analysis
+
+Install dependencies:
 
 ```bash
 pip install pandas yfinance fredapi scipy python-dotenv
 ```
 
-Copy `.env.example` to `.env` and add your FRED API key (free at [fred.stlouisfed.org](https://fred.stlouisfed.org/docs/api/api_key.html)), then:
+Create a `.env` file with your FRED API key:
+
+```text
+FRED_API_KEY=your_key_here
+```
+
+Then run:
 
 ```bash
-python src/prepare_data.py
-python src/q1_correlation.py
-python src/q2_real_returns.py
-python src/q3_digital_gold.py
-python src/q4_volatility.py
-python src/q5_drawdown.py
-python src/q6_sharpe.py
-python src/q7_seasonality.py
-python src/load_to_sqlite.py
-# Open data/processed/assets.db in DB Browser for SQLite
-# Run queries from queries.sql
+py src/prepare_data.py
+py src/q1_correlation.py
+py src/q2_real_returns.py
+py src/q3_digital_gold.py
+py src/q4_volatility.py
+py src/q5_drawdown.py
+py src/export_for_bi.py
 ```
+
+The Power BI-ready CSVs are written to:
+
+```text
+data/processed/bi/
+```
+
+## 🤖 Use of AI
+
+AI tools were used to support project structuring, wording, debugging, and code refinement.
