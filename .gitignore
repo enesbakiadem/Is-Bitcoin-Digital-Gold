@@ -1,17 +1,16 @@
-# Python
+.env
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-venv/
 
-# Environment — API keys, never commit
-.env
-
-# Raw data — downloaded via pipeline, not tracked
-data/raw/*
-!data/raw/.gitkeep
-
-# OS
-.DS_Store
-Thumbs.db
+data/raw/
+data/processed/*
+!data/processed/bi/
+data/processed/bi/*
+!data/processed/bi/executive_correlation_full.csv
+!data/processed/bi/executive_drawdown.csv
+!data/processed/bi/executive_kpis.csv
+!data/processed/bi/executive_normalized_1000.csv
+!data/processed/bi/executive_safe_haven.csv
+!data/processed/bi/executive_scorecard.csv
