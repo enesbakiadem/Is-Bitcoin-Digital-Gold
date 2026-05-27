@@ -23,13 +23,13 @@ This project tests the Digital Gold claim empirically using BTC, Gold, and globa
 
 The final Power BI dashboard tells the story across four pages.
 
-### 1. Verdict: Bitcoin did not behave like a safe haven
+### 1. Verdict
 ![Hero page](./visual/1_hero.png)
 
-### 2. Return path: high return, rougher path
+### 2. Return path
 ![Return path](./visual/2_return_path.png)
 
-### 3. Correlation behavior: closer to equities, but not strongly tied to either
+### 3. Correlation behavior
 ![Correlation behavior](./visual/3_correlation_behavior.png)
 
 ### 4. Final scorecard
