@@ -24,7 +24,6 @@ Three sub-tests:
      Spearman correlation between Fed Funds Rate changes and returns.
      Rising rates = tighter money.
      Theory: risk assets may fall; Gold may hold better if it behaves as a safe haven.
-     if it behaves as a safe haven.
 
 Usage
 ------

@@ -30,13 +30,13 @@ from config import F_RETURNS, PROCESSED, TICKERS
 # ── Load monthly returns ──────────────────────────────────────────────────────
 returns = pd.read_csv(F_RETURNS, index_col="date", parse_dates=True)
 
-ASSETS = list(TICKERS.keys())  # BTC, ETH, GOLD, ETF, EM
+ASSETS = list(TICKERS.keys())  # BTC, GOLD, ETF
 RETURN_COLS = {a: f"{a}_return_pct" for a in ASSETS}
 
 # ── Market regimes ────────────────────────────────────────────────────────────
-# Note: data starts 2017-11-09 due to ETH inner join cutoff
+# Common start is determined by the inner join across BTC, GOLD and ETF.
 PERIODS = {
-    "full":        ("2017-11-01", "2026-05-01"),
+    "full":        ("2014-09-17", "2026-05-01"),
     "crypto_bull": ("2017-11-01", "2018-02-01"),   # BTC peak ~$20k
     "covid_crash": ("2020-02-01", "2020-06-01"),
     "bull_2021":   ("2020-06-01", "2022-01-01"),

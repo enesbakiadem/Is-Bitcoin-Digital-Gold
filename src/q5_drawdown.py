@@ -16,8 +16,7 @@ Two angles:
      Exported for Power BI — visually shows crash periods and recoveries.
 
 Why this matters:
-  Q2 showed BTC has the best CAGR. But a 68% drawdown means an investor
-  who bought at the peak lost two thirds of their money before recovering.
+  Q2 showed BTC has the best CAGR. A large drawdown can erase years of gains for investors who buy near the peak.
   MDD puts the Q2 returns in context — high return, extreme risk.
   Gold's MDD tells a very different story.
 

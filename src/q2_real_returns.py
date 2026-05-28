@@ -1,9 +1,9 @@
 """
 q2_real_returns.py
 ------------------
-Q2 — Who actually grew your purchasing power since 2017?
+Q2 — Who actually grew your purchasing power since 2014?
 
-Compares all six assets on:
+Compares BTC, Gold and global equities assets on:
   - Nominal total return and CAGR
   - Real (inflation-adjusted) total return and CAGR
   - $1,000 invested at start → worth how much today, real terms?
